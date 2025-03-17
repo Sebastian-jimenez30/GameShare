@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Crear/Editar Juego{% endblock %}
+
+{% block content %}
+<h2>{% if form.instance.pk %}Editar{% else %}Crear{% endif %} Juego</h2>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
+</form>
+
+{% endblock %}

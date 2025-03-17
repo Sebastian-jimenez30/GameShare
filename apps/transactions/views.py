@@ -11,6 +11,14 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView, DetailView
 from django.utils.timezone import now
 from datetime import timedelta
+from django.contrib import messages
+from apps.transactions.utils import create_shared_rental_with_payments
+from rest_framework.request import Request
+from rest_framework.test import APIRequestFactory
+from apps.transactions.serializers import SharedRentalSerializer
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 
 from .models import (
     Rental,
@@ -45,6 +53,8 @@ class PurchaseViewSet(viewsets.ModelViewSet):
 
 
 User = get_user_model()
+
+@method_decorator(csrf_exempt, name='dispatch')
 class SharedRentalViewSet(viewsets.ModelViewSet):
     queryset = SharedRental.objects.all()
     serializer_class = SharedRentalSerializer
@@ -184,12 +194,59 @@ class UpdateCartItemTypeView(LoginRequiredMixin, View):
 
         item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
 
-        if new_type in ['rent', 'purchase']:
+        if new_type in ['rent', 'purchase', 'shared']:
             item.item_type = new_type
             item.save()
             item.cart.update_total()
 
         return redirect('cart_view')
+
+class UpdateCartItemSharedUsersView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        item_id = kwargs.get('item_id')
+        usernames = request.POST.get('usernames', '').split(',')
+        usernames = [u.strip() for u in usernames if u.strip()]
+
+        item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+
+        if item.item_type != 'shared':
+            messages.error(request, "Este ítem no es de tipo 'shared'.")
+            return redirect('cart_view')
+
+        new_users = User.objects.filter(username__in=usernames).exclude(id=request.user.id).distinct()
+
+        # Unir usuarios actuales + nuevos sin duplicados
+        current_users = set(item.shared_users.all())
+        combined_users = current_users.union(new_users)
+
+        if len(combined_users) > 4:
+            messages.warning(request, "No puedes tener más de 4 usuarios para compartir.")
+            return redirect('cart_view')
+
+        # Agregar solo los nuevos usuarios (ya que los anteriores ya están)
+        for user in new_users:
+            item.shared_users.add(user)
+
+        item.save()
+        messages.success(request, "Usuarios añadidos correctamente.")
+        return redirect('cart_view')
+
+    
+class RemoveSharedUserFromCartItemView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        item_id = kwargs.get('item_id')
+        user_id = kwargs.get('user_id')
+
+        item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
+        user_to_remove = get_object_or_404(User, id=user_id)
+
+        item.shared_users.remove(user_to_remove)
+        item.save()
+        messages.success(request, f"Usuario {user_to_remove.username} eliminado del grupo compartido.")
+        return redirect('cart_view')
+
+
+
     
 class CheckoutCartView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
@@ -199,16 +256,28 @@ class CheckoutCartView(LoginRequiredMixin, View):
         for item in items:
             if item.item_type == 'purchase':
                 Purchase.objects.create(user=request.user, game=item.game, date=now())
+
             elif item.item_type == 'rent':
                 Rental.objects.create(
                     user=request.user,
                     game=item.game,
                     start_date=now(),
-                    end_date=now() + timedelta(days=7),  # Por ejemplo: renta por 7 días
+                    end_date=now() + timedelta(days=7),
                     total_price=item.game.price,
                     status='active'
                 )
 
+            elif item.item_type == 'shared':
+                shared_users = list(item.shared_users.all())
+
+                # Asegurar que el usuario que hace el checkout también esté incluido
+                if request.user not in shared_users:
+                    shared_users.append(request.user)
+
+                # ✅ Usa el helper que ya funciona (como desde Swagger)
+                create_shared_rental_with_payments(item.game, shared_users)
+
+        # Limpiar carrito
         items.delete()
         cart.total = 0
         cart.save()

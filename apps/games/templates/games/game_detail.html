@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle del Juego{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2>{{ game.title }}</h2>
+    <p><strong>Desarrollador:</strong> {{ game.developer }}</p>
+    <p><strong>Precio:</strong> ${{ game.price }}</p>
+    <p><strong>Descripción:</strong> {{ game.description }}</p>
+
+    <h3>Reseñas</h3>
+    {% if reviews %}
+      <ul>
+        {% for review in reviews %}
+          <li>
+            <strong>{{ review.user.username }}:</strong> 
+            {{ review.rating }}⭐
+            <p>{{ review.comment }}</p>
+            <small>Publicado el {{ review.date }}</small>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No hay reseñas para este juego.</p>
+    {% endif %}
+
+    <h4>Deja tu reseña</h4>
+    <form method="post">
+      {% csrf_token %}
+      {{ review_form.as_p }}
+      <button type="submit" class="btn btn-primary">Enviar Reseña</button>
+    </form>
+
+    <a href="{% url 'catalog' %}" class="btn btn-secondary mt-3">Volver al Catálogo</a>
+  </div>
+{% endblock %}

@@ -78,12 +78,14 @@ class CartItem(models.Model):
     RENT_TYPE_CHOICES = [
         ('rent', 'Rent'),
         ('purchase', 'Purchase'),
+        ('shared', 'Shared'),
     ]
 
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     item_type = models.CharField(max_length=10, choices=RENT_TYPE_CHOICES)
     quantity = models.PositiveIntegerField(default=1)
+    shared_users = models.ManyToManyField(User, related_name='shared_cart_items', blank=True)
 
     def __str__(self):
         return f"{self.item_type.title()} - {self.game.title} ({self.quantity})"

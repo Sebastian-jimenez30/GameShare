@@ -4,33 +4,58 @@
 
 {% block content %}
 <h2>Catálogo de Juegos (desde API)</h2>
+
+{% if request.user.is_superuser %}
+  <div class="mb-3">
+    <a href="{% url 'game_create' %}" class="btn btn-primary">Crear Nuevo Juego</a>
+  </div>
+{% endif %}
+
 <div class="row">
   {% for game in games %}
     <div class="col-md-4">
-      <div class="card mb-3">
+      
+      <a href="{% url 'game_detail' game.id %}" class="card mb-3 text-decoration-none"> <!-- Esto convierte toda la tarjeta en un enlace -->
         <div class="card-body">
           <h5 class="card-title">{{ game.title }}</h5>
           <p class="card-text"><strong>Developer:</strong> {{ game.developer }}</p>
           <p class="card-text"><strong>Price:</strong> ${{ game.price }}</p>
-
+    
           <form action="{% url 'add_to_cart' %}" method="post" class="d-inline">
             {% csrf_token %}
             <input type="hidden" name="game_id" value="{{ game.id }}">
             <input type="hidden" name="item_type" value="rent">
             <button type="submit" class="btn btn-outline-warning btn-sm">Rentar</button>
           </form>
-
+    
           <form action="{% url 'add_to_cart' %}" method="post" class="d-inline">
             {% csrf_token %}
             <input type="hidden" name="game_id" value="{{ game.id }}">
             <input type="hidden" name="item_type" value="purchase">
             <button type="submit" class="btn btn-outline-success btn-sm">Comprar</button>
           </form>
+          
+          <form action="{% url 'add_to_cart' %}" method="post" class="d-inline">
+            {% csrf_token %}
+            <input type="hidden" name="game_id" value="{{ game.id }}">
+            <input type="hidden" name="item_type" value="shared">
+            <button type="submit" class="btn btn-outline-primary btn-sm">Renta Compartida</button>
+          </form>
+
+          {% if request.user.is_superuser %}
+            <div class="mt-2">
+              <a href="{% url 'game_edit' game.id %}" class="btn btn-warning btn-sm">Editar</a>
+              <a href="{% url 'game_delete' game.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+            </div>
+          {% endif %}
         </div>
-      </div>
+      </a>
+    
     </div>
   {% empty %}
     <p>No hay juegos disponibles.</p>
   {% endfor %}
 </div>
+
 {% endblock %}
+
