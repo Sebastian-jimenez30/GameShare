@@ -9,3 +9,7 @@ class UserRegisterForm(forms.Form):
     processor = forms.CharField(max_length=100)
     ram_gb = forms.IntegerField()
     graphics_card = forms.CharField(max_length=100)
+
+class UserLoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput)
