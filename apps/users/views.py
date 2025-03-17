@@ -111,9 +111,9 @@ class UserLibraryView(LoginRequiredMixin, TemplateView):
             all_paid = not payments.filter(~Q(status='completed')).exists()
 
             if all_paid:
-                available_shared_rentals.append(shared_rental.game)
+                available_shared_rentals.append(shared_rental)
             else:
-                unavailable_shared_rentals.append(shared_rental.game)
+                unavailable_shared_rentals.append(shared_rental)
 
         context['available_shared_rentals'] = available_shared_rentals
         context['unavailable_shared_rentals'] = unavailable_shared_rentals

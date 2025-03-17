@@ -3,11 +3,12 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from apps.games.models import Game
+from apps.transactions.models import SharedRental, SharedRentalPayment
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from django.utils.timezone import now
 from datetime import timedelta
 
@@ -213,3 +214,35 @@ class CheckoutCartView(LoginRequiredMixin, View):
         cart.save()
 
         return redirect('catalog')
+
+
+class SharedRentalDetailsView(LoginRequiredMixin, DetailView):
+    model = SharedRental
+    template_name = 'transactions/shared_rental_details.html'
+    context_object_name = 'shared_rental'
+
+    def get_object(self, queryset=None):
+        # Obtiene el objeto SharedRental basado en el id de la URL
+        return SharedRental.objects.get(pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        shared_rental = self.get_object()
+
+        # Obtener los pagos de los usuarios relacionados con este rental compartido
+        shared_rental_payments = SharedRentalPayment.objects.filter(shared_rental=shared_rental)
+
+        # Obtener los usuarios que han pagado y los que no han pagado
+        paid_users = shared_rental_payments.filter(status='completed')
+        pending_users = shared_rental_payments.filter(status='pending')
+
+        # Identificar si el usuario actual ha pagado
+        current_user_payment = shared_rental_payments.filter(user=self.request.user).first()
+        user_has_paid = current_user_payment.status == 'completed' if current_user_payment else False
+
+        context.update({
+            'paid_users': paid_users,
+            'pending_users': pending_users,
+            'user_has_paid': user_has_paid,
+        })
+        return context
