@@ -4,10 +4,11 @@ from django.views.generic.edit import FormView
 from django.contrib.auth import authenticate, login
 from django.urls import reverse_lazy
 from django.contrib import messages
+import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from apps.transactions.models import Purchase, Rental
-
+from rest_framework.permissions import AllowAny
 
 from .models import User, Customer, AdminProfile
 from .serializers import UserSerializer, CustomerSerializer, AdminProfileSerializer
@@ -18,6 +19,7 @@ from .forms import UserRegisterForm, UserLoginForm
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [AllowAny]
 
 
 class CustomerViewSet(viewsets.ModelViewSet):
@@ -61,7 +63,6 @@ class UserRegisterView(FormView):
             messages.error(self.request, f"Error al conectar con API: {str(e)}")
 
         return super().form_valid(form)
-    
 
 class UserLoginView(FormView):
     template_name = 'users/login.html'

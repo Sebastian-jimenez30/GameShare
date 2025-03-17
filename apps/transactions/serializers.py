@@ -6,6 +6,7 @@ from .models import (
     SharedRental,
     SharedRentalPayment,
     Cart,
+    CartItem,
     Invoice,
     Payment
 )
@@ -36,12 +37,19 @@ class SharedRentalPaymentSerializer(serializers.ModelSerializer):
         model = SharedRentalPayment
         fields = '__all__'
 
+class CartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CartItem
+        fields = ['id', 'game', 'item_type', 'quantity']
+
 
 class CartSerializer(serializers.ModelSerializer):
+    items = CartItemSerializer(source='cartitem_set', many=True, read_only=True)
+
     class Meta:
         model = Cart
-        fields = '__all__'
-
+        fields = ['id', 'user', 'total', 'items']
+        read_only_fields = ['user', 'total']
 
 class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
