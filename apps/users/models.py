@@ -7,7 +7,12 @@ class User(AbstractUser):
         ('customer','Customer'),
         ('admin','Admin'),
     )
-    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
+    user_type = models.CharField(
+        max_length=10,
+        choices=USER_TYPE_CHOICES,
+        default='customer'
+    )
+
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
 
@@ -16,7 +21,7 @@ class User(AbstractUser):
 
 class Customer(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    lotalty_points = models.IntegerField()
+    loyalty_points = models.IntegerField(default=0)
 
     processor = models.CharField(max_length=100)
     ram_gb = models.IntegerField()
