@@ -9,6 +9,17 @@
     <p><strong>Precio:</strong> ${{ game.price }}</p>
     <p><strong>Descripción:</strong> {{ game.description }}</p>
 
+    <h3>Categorías</h3>
+    {% if categories %}
+      <ul>
+        {% for category in categories %}
+          <li>{{ category.category_name }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Este juego no tiene categorías asociadas.</p>
+    {% endif %}
+
     <h3>Reseñas</h3>
     {% if reviews %}
       <ul>

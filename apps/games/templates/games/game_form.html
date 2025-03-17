@@ -1,3 +1,4 @@
+<!-- apps/games/templates/games/game_form.html -->
 {% extends "base.html" %}
 
 {% block title %}Crear/Editar Juego{% endblock %}
@@ -7,8 +8,9 @@
 
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
-  {{ form.as_p }}
+  {{ form.as_p }}  <!-- Aquí se renderizan todos los campos, incluyendo las categorías -->
   <button type="submit" class="btn btn-primary">{% if form.instance.pk %}Actualizar{% else %}Crear{% endif %}</button>
 </form>
 
 {% endblock %}
+

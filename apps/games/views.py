@@ -49,7 +49,8 @@ class GameDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['reviews'] = Review.objects.filter(game=self.object).order_by('-date')
-        context['review_form'] = ReviewForm()  # Agrega el formulario al contexto
+        context['review_form'] = ReviewForm()  # Agrega el formulario de reseña al contexto
+        context['categories'] = self.object.category.all()  # Obtiene todas las categorías asociadas al juego
         return context
 
     def post(self, request, *args, **kwargs):
@@ -63,7 +64,6 @@ class GameDetailView(DetailView):
             review.save()
             return redirect('game_detail', pk=game.pk)  # Redirige al detalle del juego para ver la nueva reseña
         return render(request, self.template_name, {'game': game, 'review_form': form})
-
 class GameCreateView(UserPassesTestMixin, CreateView):
     model = Game
     form_class = GameForm
@@ -74,8 +74,21 @@ class GameCreateView(UserPassesTestMixin, CreateView):
         return self.request.user.is_superuser  # Solo superusuarios pueden acceder a esta vista
 
     def form_valid(self, form):
-        form.instance.user = self.request.user  # Si quieres asignar un usuario al juego, puedes hacerlo aquí.
+        # Asigna el usuario actual al juego
+        form.instance.user = self.request.user  
+        
+        # Guardamos el juego primero
+        game = form.save()
+
+        # Obtenemos las categorías seleccionadas desde el formulario
+        categories = form.cleaned_data.get('categories')
+
+        # Creamos las relaciones en la tabla intermedia GameCategory
+        for category in categories:
+            GameCategory.objects.create(game=game, category=category)
+
         return super().form_valid(form)
+
 
 class GameEditView(UserPassesTestMixin, UpdateView):
     model = Game
@@ -85,6 +98,25 @@ class GameEditView(UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         return self.request.user.is_superuser  # Solo superusuarios pueden acceder a esta vista
+
+    def form_valid(self, form):
+        # Asigna el usuario actual al juego
+        form.instance.user = self.request.user
+        
+        # Guardamos el juego primero
+        game = form.save()
+
+        # Eliminamos las relaciones previas en GameCategory para este juego
+        GameCategory.objects.filter(game=game).delete()
+
+        # Obtenemos las categorías seleccionadas desde el formulario
+        categories = form.cleaned_data.get('categories')
+
+        # Creamos las nuevas relaciones en la tabla intermedia GameCategory
+        for category in categories:
+            GameCategory.objects.create(game=game, category=category)
+
+        return super().form_valid(form)
 
 class GameDeleteView(UserPassesTestMixin, DeleteView):
     model = Game

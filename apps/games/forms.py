@@ -1,11 +1,16 @@
 from django import forms
-from .models import Review
-from .models import Game
+from .models import Game, Category, Review
 
 class GameForm(forms.ModelForm):
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects.all(),  # Muestra todas las categorías disponibles
+        widget=forms.CheckboxSelectMultiple,  # Casillas de verificación para seleccionar múltiples categorías
+        required=False  # Si deseas que las categorías sean opcionales, ponlo en False
+    )
+
     class Meta:
         model = Game
-        fields = ['title', 'developer', 'year', 'price', 'image', 'category']
+        fields = ['title', 'developer', 'year', 'price', 'image', 'categories']  # Asegúrate de incluir 'categories'
 
 class ReviewForm(forms.ModelForm):
     class Meta:
