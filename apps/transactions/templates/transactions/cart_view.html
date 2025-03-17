@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Carrito{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Mi Carrito</h2>
+
+  {% if items %}
+    <table class="table table-bordered mt-4">
+      <thead>
+        <tr>
+          <th>Juego</th>
+          <th>Tipo</th>
+          <th>Precio</th>
+          <th>Cantidad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.game.title }}</td>
+          <td>
+            <form action="{% url 'update_cart_item_type' item.id %}" method="post" class="d-inline">
+              {% csrf_token %}
+              <select name="item_type" onchange="this.form.submit()" class="form-select form-select-sm">
+                <option value="rent" {% if item.item_type == 'rent' %}selected{% endif %}>Renta</option>
+                <option value="purchase" {% if item.item_type == 'purchase' %}selected{% endif %}>Compra</option>
+              </select>
+            </form>
+          </td>
+          <td>${{ item.game.price }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>
+            <form method="post" action="{% url 'remove_from_cart' item.id %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h4>Total: ${{ cart.total }}</h4>
+    {% if items %}
+        <form method="post" action="{% url 'checkout_cart' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary mt-3">Finalizar Compra</button>
+        </form>
+    {% endif %}
+
+  {% else %}
+    <p>Tu carrito está vacío.</p>
+  {% endif %}
+</div>
+{% endblock %}
+

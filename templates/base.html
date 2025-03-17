@@ -11,18 +11,30 @@
             <a class="navbar-brand" href="#">GameShare</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'catalog' %}">Catálogo</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Biblioteca</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_login_form' %}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'user_register_form' %}">Register</a>
-                    </li>
+                      {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'catalog' %}">Catálogo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'cart_view' %}">Carrito</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Hola, {{ user.username }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                              {% csrf_token %}
+                              <button type="submit" class="nav-link btn btn-link"">Cerrar Sesión</button>
+                            </form>
+                          </li>
+                      {% else %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_login_form' %}">Iniciar sesión</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_register_form' %}">Registrarse</a>
+                      </li>
+                      {% endif %}
                 </ul>
             </div>
         </div>

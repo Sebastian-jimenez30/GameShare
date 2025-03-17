@@ -44,9 +44,7 @@ class SharedRentalPaymentAdmin(admin.ModelAdmin):
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'total')
-    search_fields = ('user__username',)
-    filter_horizontal = ('items',)  # útil para seleccionar juegos fácilmente
+    list_display = ('user', 'total')
 
 
 @admin.register(Invoice)

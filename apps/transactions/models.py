@@ -61,11 +61,32 @@ class SharedRentalPayment(models.Model):
 
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    items = models.ManyToManyField(Game, blank=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     def __str__(self):
         return f'Cart of {self.user.username}'
+
+    def update_total(self):
+        total = 0
+        for item in self.cartitem_set.all():
+            total += item.game.price * item.quantity
+        self.total = total
+        self.save()
+
+
+class CartItem(models.Model):
+    RENT_TYPE_CHOICES = [
+        ('rent', 'Rent'),
+        ('purchase', 'Purchase'),
+    ]
+
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    item_type = models.CharField(max_length=10, choices=RENT_TYPE_CHOICES)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.item_type.title()} - {self.game.title} ({self.quantity})"
 
 
 class Invoice(models.Model):
