@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>🎮 Detalles del Juego Compartido</h2>
+
+<h3>🧑‍🤝‍🧑 Usuarios que han pagado</h3>
+<ul>
+    {% for payment in paid_users %}
+        <li>{{ payment.user.username }} - <span style="color: green;">Pagado ✅</span></li>
+    {% empty %}
+        <li>No hay usuarios que hayan pagado aún.</li>
+    {% endfor %}
+</ul>
+
+<h3>⏳ Usuarios pendientes de pago</h3>
+<ul>
+    {% for payment in pending_users %}
+        <li>{{ payment.user.username }} - <span style="color: red;">Pendiente ❌</span></li>
+    {% empty %}
+        <li>No hay usuarios pendientes de pago.</li>
+    {% endfor %}
+</ul>
+
+<h3>📥 Estado de tu pago</h3>
+{% if user_has_paid %}
+    <p>¡Has pagado! Puedes descargar el juego.</p>
+{% else %}
+    <p>Tu pago está pendiente. Haz clic en el botón para completar el pago.</p>
+    {% if user_has_paid == False %}
+    <form method="post" href="#">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-success btn-sm">Pagar</button>
+    </form>
+    {% endif %}
+{% endif %}
+
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from apps.transactions.views import AddToCartView, CartView, RemoveFromCartView, UpdateCartItemTypeView, CheckoutCartView, UpdateCartItemSharedUsersView, RemoveSharedUserFromCartItemView
+from apps.transactions.views import AddToCartView, CartView, RemoveFromCartView, UpdateCartItemTypeView, CheckoutCartView, UpdateCartItemSharedUsersView, RemoveSharedUserFromCartItemView, SharedRentalDetailsView
 
 from .views import (
     RentalViewSet,
@@ -32,4 +32,5 @@ urlpatterns = [
     path('cart/checkout/', CheckoutCartView.as_view(), name='checkout_cart'),
     path('cart/update-shared-users/<int:item_id>/', UpdateCartItemSharedUsersView.as_view(), name='update_shared_users'),
     path('cart/remove-shared-user/<int:item_id>/<int:user_id>/', RemoveSharedUserFromCartItemView.as_view(), name='remove_shared_user'),
+    path('shared-rental-details/<int:pk>/', SharedRentalDetailsView.as_view(), name='shared_rental_details')
 ]
