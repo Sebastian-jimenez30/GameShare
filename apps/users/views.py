@@ -1,4 +1,5 @@
 import requests
+from django.db.models import Q
 from rest_framework import viewsets
 from django.views.generic.edit import FormView
 from django.contrib.auth import authenticate, login
@@ -7,7 +8,7 @@ from django.contrib import messages
 import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
-from apps.transactions.models import Purchase, Rental
+from apps.transactions.models import Purchase, Rental, SharedRental, SharedRentalPayment
 from rest_framework.permissions import AllowAny
 
 from .models import User, Customer, AdminProfile
@@ -89,12 +90,32 @@ class UserLibraryView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Juegos comprados por el usuario actual
-        purchases = Purchase.objects.filter(user=self.request.user).select_related('game')
-        # Juegos rentados por el usuario actual
-        rentals = Rental.objects.filter(user=self.request.user).select_related('game')
+        user = self.request.user
 
+        # Juegos comprados
+        purchases = Purchase.objects.filter(user=user).select_related('game')
         context['purchased_games'] = [purchase.game for purchase in purchases]
+
+        # Juegos rentados normales
+        rentals = Rental.objects.filter(user=user).select_related('game')
         context['rented_games'] = [rental.game for rental in rentals]
+
+        # Juegos de renta compartida
+        shared_rentals = SharedRental.objects.filter(users=user).select_related('game')
+
+        available_shared_rentals = []
+        unavailable_shared_rentals = []
+
+        for shared_rental in shared_rentals:
+            payments = SharedRentalPayment.objects.filter(shared_rental=shared_rental)
+            all_paid = not payments.filter(~Q(status='completed')).exists()
+
+            if all_paid:
+                available_shared_rentals.append(shared_rental.game)
+            else:
+                unavailable_shared_rentals.append(shared_rental.game)
+
+        context['available_shared_rentals'] = available_shared_rentals
+        context['unavailable_shared_rentals'] = unavailable_shared_rentals
 
         return context
