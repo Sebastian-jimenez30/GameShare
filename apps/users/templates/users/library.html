@@ -5,41 +5,70 @@
 <h2>🎮 Mi Biblioteca</h2>
 
 <h3>🛒 Juegos Comprados</h3>
-<ul>
+<div class="row">
   {% for game in purchased_games %}
-    <li><strong>{{ game.title }}</strong> - {{ game.developer }}</li>
+    <div class="col-md-4">
+      <div class="card mb-3 border-success">
+        <div class="card-body">
+          <h5 class="card-title">{{ game.title }}</h5>
+          <p class="card-text">Desarrollador: {{ game.developer }}</p>
+          <button type="submit" class="btn btn-outline-success btn-sm">Descargar</button>
+        </div>
+      </div>
+    </div>
   {% empty %}
-    <li>No has comprado juegos aún.</li>
+    <p>No has comprado juegos aún.</p>
   {% endfor %}
-</ul>
+</div>
 
 <h3>📦 Juegos Rentados</h3>
-<ul>
+<div class="row">
   {% for game in rented_games %}
-    <li><strong>{{ game.title }}</strong> - {{ game.developer }}</li>
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ game.title }}</h5>
+          <p class="card-text">Desarrollador: {{ game.developer }}</p>
+        </div>
+      </div>
+    </div>
   {% empty %}
-    <li>No has rentado juegos aún.</li>
+    <p>No has rentado juegos aún.</p>
   {% endfor %}
-</ul>
+</div>
 
 <h3>🤝 Juegos Rentados Compartidos</h3>
-<ul>
-  {% for game in available_shared_rentals %}
-    <li>
-      <strong>{{ game.title }}</strong> - {{ game.developer }}
-      <br><span style="color: green;">✅ Disponible para descarga (todos han pagado)</span>
-    </li>
+<div class="row">
+  {% for shared_rental in available_shared_rentals %}
+    <div class="col-md-4">
+      <div class="card mb-3 border-success">
+        <div class="card-body">
+          <h5 class="card-title">{{ shared_rental.game.title }}</h5>
+          <p class="card-text">Desarrollador: {{ shared_rental.game.developer }}</p>
+          <p class="text-success">✅ Disponible para descarga (todos han pagado)</p>
+          <button type="submit" class="btn btn-outline-success btn-sm">Descargar</button>
+        </div>
+      </div>
+    </div>
   {% endfor %}
 
-  {% for game in unavailable_shared_rentals %}
-    <li>
-      <strong>{{ game.title }}</strong> - {{ game.developer }}
-      <br><span style="color: red;">❌ No disponible (hay pagos pendientes)</span>
-    </li>
+  {% for shared_rental in unavailable_shared_rentals %}
+  <div class="col-md-4">
+    <div class="card mb-3 border-danger">
+      <div class="card-body">
+        <h5 class="card-title">{{ shared_rental.game.title }}</h5>
+        <p class="card-text">Desarrollador: {{ shared_rental.game.developer }}</p>
+        <p class="text-danger">❌ No disponible (hay pagos pendientes)</p>
+        <a class="btn btn-outline-danger btn-sm" href="{% url 'shared_rental_details' pk=shared_rental.id %}">
+          Ver detalles
+        </a>
+      </div>
+    </div>
+  </div>
   {% endfor %}
 
   {% if available_shared_rentals|length == 0 and unavailable_shared_rentals|length == 0 %}
-    <li>No tienes juegos rentados compartidos aún.</li>
+    <p>No tienes juegos rentados compartidos aún.</p>
   {% endif %}
-</ul>
+</div>
 {% endblock %}
