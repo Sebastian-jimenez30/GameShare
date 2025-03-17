@@ -7,12 +7,7 @@
 <h3>🛒 Juegos Comprados</h3>
 <ul>
   {% for game in purchased_games %}
-    <li>
-      <strong>{{ game.title }}</strong> - {{ game.developer }} ({{ game.year }}) - ${{ game.price }}
-      {% if game.image %}
-        <br><img src="{{ game.image.url }}" width="100" alt="Portada del juego">
-      {% endif %}
-    </li>
+    <li><strong>{{ game.title }}</strong> - {{ game.developer }}</li>
   {% empty %}
     <li>No has comprado juegos aún.</li>
   {% endfor %}
@@ -21,14 +16,31 @@
 <h3>📦 Juegos Rentados</h3>
 <ul>
   {% for game in rented_games %}
-    <li>
-      <strong>{{ game.title }}</strong> - {{ game.developer }} ({{ game.year }}) - ${{ game.price }}
-      {% if game.image %}
-        <br><img src="{{ game.image.url }}" width="100" alt="Portada del juego">
-      {% endif %}
-    </li>
+    <li><strong>{{ game.title }}</strong> - {{ game.developer }}</li>
   {% empty %}
     <li>No has rentado juegos aún.</li>
   {% endfor %}
 </ul>
+
+<h3>🤝 Juegos Rentados Compartidos</h3>
+<ul>
+  {% for game in available_shared_rentals %}
+    <li>
+      <strong>{{ game.title }}</strong> - {{ game.developer }}
+      <br><span style="color: green;">✅ Disponible para descarga (todos han pagado)</span>
+    </li>
+  {% endfor %}
+
+  {% for game in unavailable_shared_rentals %}
+    <li>
+      <strong>{{ game.title }}</strong> - {{ game.developer }}
+      <br><span style="color: red;">❌ No disponible (hay pagos pendientes)</span>
+    </li>
+  {% endfor %}
+
+  {% if available_shared_rentals|length == 0 and unavailable_shared_rentals|length == 0 %}
+    <li>No tienes juegos rentados compartidos aún.</li>
+  {% endif %}
+</ul>
 {% endblock %}
+
