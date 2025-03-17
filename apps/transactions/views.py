@@ -158,10 +158,30 @@ class AddToCartView(LoginRequiredMixin, View):
         game_id = request.POST.get('game_id')
         item_type = request.POST.get('item_type')
 
+        # Obtén el juego seleccionado
         game = get_object_or_404(Game, id=game_id)
+        
+        # Verifica si el usuario ya ha comprado el juego
+        if Purchase.objects.filter(user=request.user, game=game).exists():
+            # Si ya ha comprado el juego, mostramos un mensaje y no lo agregamos al carrito
+            messages.info(request, f"Ya has comprado '{game.title}' y no puedes agregarlo nuevamente al carrito.")
+            return redirect('catalog')
+
+        # Obtén o crea el carrito del usuario
         cart, created = Cart.objects.get_or_create(user=request.user)
 
+        # Verifica si el juego ya está en el carrito con el tipo 'purchase'
+        existing_item = CartItem.objects.filter(cart=cart, game=game).first()
+
+        if existing_item and existing_item.item_type == 'purchase':
+            # Si el juego ya está en el carrito como comprado, muestra un mensaje
+            messages.info(request, f"El juego '{game.title}' ya ha sido comprado y no se puede agregar nuevamente.")
+            return redirect('catalog')
+
+        # Si el juego no está en el carrito o no está comprado, crea un nuevo CartItem
         CartItem.objects.create(cart=cart, game=game, item_type=item_type, quantity=1)
+
+        # Actualiza el total del carrito
         cart.update_total()
 
         return redirect('catalog')
