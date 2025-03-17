@@ -1,24 +1,19 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Registro de Usuario</title>
-</head>
-<body>
+{% extends "base.html" %}
 
+{% block title %}Registro de Usuario{% endblock %}
+
+{% block content %}
     <h2>Formulario de Registro</h2>
 
     {% if messages %}
         {% for message in messages %}
-            <p style="color: green">{{ message }}</p>
+            <p class="alert alert-info">{{ message }}</p>
         {% endfor %}
     {% endif %}
 
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Registrarse</button>
+        <button type="submit" class="btn btn-primary">Registrarse</button>
     </form>
-
-</body>
-</html>
+{% endblock %}

@@ -21,3 +21,24 @@ class RecommendationViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+import requests
+from django.views.generic import TemplateView
+
+class CatalogView(TemplateView):
+    template_name = 'games/catalog.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            response = requests.get('http://localhost:8000/api/games/games/')
+            if response.status_code == 200:
+                context['games'] = response.json()
+            else:
+                context['games'] = []
+        except Exception as e:
+            context['games'] = []
+            print(f"[ERROR] Failed to fetch games from API: {e}")
+
+        return context
+

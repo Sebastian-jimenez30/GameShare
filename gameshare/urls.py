@@ -22,6 +22,7 @@ urlpatterns = [
     path('api/users/', include('apps.users.urls')),
     path('users/', include('apps.users.urls')),
     path('api/games/', include('apps.games.urls')),
+    path('games/', include('apps.games.urls')),
     path('api/transactions/', include('apps.transactions.urls')),
 
     # Swagger and Redoc
