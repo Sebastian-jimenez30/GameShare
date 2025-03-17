@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from .models import User, Customer, AdminProfile
+from apps.transactions.models import Purchase, Rental
+from apps.games.models import Game
 
 
 class CustomerNestedSerializer(serializers.ModelSerializer):
@@ -10,11 +12,21 @@ class CustomerNestedSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     customer = CustomerNestedSerializer(required=False)
+    purchased_games = serializers.SerializerMethodField()
+    rented_games = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'name', 'password', 'customer']
+        fields = ['id', 'username', 'email', 'name', 'password', 'customer','purchased_games','rented_games']
         extra_kwargs = {'password': {'write_only': True}, 'email': {'required': True}}
+
+    def get_purchased_games(self, obj):
+        purchases = Purchase.objects.filter(user=obj)
+        return PurchaseSerializer(purchases, many=True).data
+
+    def get_rented_games(self, obj):
+        rentals = Rental.objects.filter(user=obj)
+        return RentalSerializer(rentals, many=True).data
 
     def create(self, validated_data):
         customer_data = validated_data.pop('customer', None)
@@ -36,8 +48,26 @@ class CustomerSerializer(serializers.ModelSerializer):
         model = Customer
         fields = '__all__'
 
-
 class AdminProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdminProfile
         fields = '__all__'
+
+class GameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Game
+        fields = ['id', 'title', 'developer', 'year', 'price']
+
+class PurchaseSerializer(serializers.ModelSerializer):
+    game = GameSerializer()
+
+    class Meta:
+        model = Purchase
+        fields = ['game']
+
+class RentalSerializer(serializers.ModelSerializer):
+    game = GameSerializer()
+
+    class Meta:
+        model = Rental
+        fields = ['game', 'start_date', 'end_date', 'status']
