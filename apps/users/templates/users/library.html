@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>🎮 Mi Biblioteca</h2>
+
+<h3>🛒 Juegos Comprados</h3>
+<ul>
+  {% for game in purchased_games %}
+    <li>
+      <strong>{{ game.title }}</strong> - {{ game.developer }} ({{ game.year }}) - ${{ game.price }}
+      {% if game.image %}
+        <br><img src="{{ game.image.url }}" width="100" alt="Portada del juego">
+      {% endif %}
+    </li>
+  {% empty %}
+    <li>No has comprado juegos aún.</li>
+  {% endfor %}
+</ul>
+
+<h3>📦 Juegos Rentados</h3>
+<ul>
+  {% for game in rented_games %}
+    <li>
+      <strong>{{ game.title }}</strong> - {{ game.developer }} ({{ game.year }}) - ${{ game.price }}
+      {% if game.image %}
+        <br><img src="{{ game.image.url }}" width="100" alt="Portada del juego">
+      {% endif %}
+    </li>
+  {% empty %}
+    <li>No has rentado juegos aún.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

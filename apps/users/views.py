@@ -1,3 +1,4 @@
+import requests
 from rest_framework import viewsets
 from django.views.generic.edit import FormView
 from django.contrib.auth import authenticate, login
@@ -5,6 +6,8 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
+from apps.transactions.models import Purchase, Rental
 from rest_framework.permissions import AllowAny
 
 from .models import User, Customer, AdminProfile
@@ -33,7 +36,7 @@ class AdminProfileViewSet(viewsets.ModelViewSet):
 class UserRegisterView(FormView):
     template_name = 'users/register_form.html'
     form_class = UserRegisterForm
-    success_url = reverse_lazy('user_register_form')
+    success_url = reverse_lazy('user_login_form')
 
     def form_valid(self, form):
         api_url = 'http://localhost:8000/api/users/users/'  # URL de tu endpoint API DRF
@@ -64,7 +67,7 @@ class UserRegisterView(FormView):
 class UserLoginView(FormView):
     template_name = 'users/login.html'
     form_class = UserLoginForm
-    success_url = reverse_lazy('user_register_form')  # O tu vista de inicio para clientes
+    success_url = reverse_lazy('catalog')  # O tu vista de inicio para clientes
 
     def form_valid(self, form):
         username = form.cleaned_data['username']
@@ -79,3 +82,19 @@ class UserLoginView(FormView):
         else:
             messages.error(self.request, "Credenciales inválidas. Inténtalo de nuevo.")
             return self.form_invalid(form)
+        
+class UserLibraryView(LoginRequiredMixin, TemplateView):
+    template_name = 'users/library.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Juegos comprados por el usuario actual
+        purchases = Purchase.objects.filter(user=self.request.user).select_related('game')
+        # Juegos rentados por el usuario actual
+        rentals = Rental.objects.filter(user=self.request.user).select_related('game')
+
+        context['purchased_games'] = [purchase.game for purchase in purchases]
+        context['rented_games'] = [rental.game for rental in rentals]
+
+        return context
