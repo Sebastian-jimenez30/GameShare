@@ -9,6 +9,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from apps.transactions.models import Purchase, Rental
 from rest_framework.permissions import AllowAny
+from django.http import JsonResponse
+from django.contrib.auth import get_user_model
+from django.views import View
 
 from .models import User, Customer, AdminProfile
 from .serializers import UserSerializer, CustomerSerializer, AdminProfileSerializer
@@ -75,14 +78,12 @@ class UserLoginView(FormView):
 
         user = authenticate(self.request, username=username, password=password)
 
-        if user is not None:
+        if user:
             login(self.request, user)
-            messages.success(self.request, f"Bienvenido {user.username}")
             return super().form_valid(form)
         else:
             messages.error(self.request, "Credenciales inválidas. Inténtalo de nuevo.")
             return self.form_invalid(form)
-        
 class UserLibraryView(LoginRequiredMixin, TemplateView):
     template_name = 'users/library.html'
 
@@ -98,3 +99,12 @@ class UserLibraryView(LoginRequiredMixin, TemplateView):
         context['rented_games'] = [rental.game for rental in rentals]
 
         return context
+
+User = get_user_model()
+
+class UserSearchView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('q', '')
+        users = User.objects.filter(username__icontains=query).exclude(id=request.user.id)[:10]
+        results = [{'username': user.username} for user in users]
+        return JsonResponse(results, safe=False)

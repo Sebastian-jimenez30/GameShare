@@ -27,6 +27,7 @@
               <select name="item_type" onchange="this.form.submit()" class="form-select form-select-sm">
                 <option value="rent" {% if item.item_type == 'rent' %}selected{% endif %}>Renta</option>
                 <option value="purchase" {% if item.item_type == 'purchase' %}selected{% endif %}>Compra</option>
+                <option value="shared" {% if item.item_type == 'shared' %}selected{% endif %}>Renta Compartida</option>
               </select>
             </form>
           </td>
@@ -37,6 +38,33 @@
               {% csrf_token %}
               <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
             </form>
+
+            {% if item.item_type == 'shared' %}
+                {% if item.shared_users.all %}
+                    <div class="mt-2 small">
+                        <strong>Usuarios seleccionados:</strong>
+                        <ul class="list-group list-group-sm">
+                        {% for user in item.shared_users.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center py-1">
+                            {{ user.username }}
+                            <form method="post" action="{% url 'remove_shared_user' item.id user.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger btn-sm">✕</button>
+                            </form>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                <form method="post" action="{% url 'update_shared_users' item.id %}" class="mt-2">
+                    {% csrf_token %}
+                    <label>Usuarios para compartir (usernames separados por coma):</label>
+                    <input type="text" name="usernames" class="form-control form-control-sm mb-1 user-autocomplete"
+                        placeholder="ej: juan,marco,luis" data-item-id="{{ item.id }}">
+                    <div class="autocomplete-suggestions mt-1" id="autocomplete-list-{{ item.id }}"></div>
+                    <button type="submit" class="btn btn-sm btn-outline-primary">Guardar Usuarios</button>
+                </form>
+            {% endif %}
           </td>
         </tr>
         {% endfor %}
@@ -44,16 +72,55 @@
     </table>
 
     <h4>Total: ${{ cart.total }}</h4>
-    {% if items %}
-        <form method="post" action="{% url 'checkout_cart' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-primary mt-3">Finalizar Compra</button>
-        </form>
-    {% endif %}
+
+    <form method="post" action="{% url 'checkout_cart' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary mt-3">Finalizar Compra</button>
+    </form>
 
   {% else %}
     <p>Tu carrito está vacío.</p>
   {% endif %}
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.querySelectorAll('.user-autocomplete').forEach(function(input) {
+        const suggestionsBox = document.getElementById(`autocomplete-list-${input.dataset.itemId}`);
+    
+        input.addEventListener("input", function () {
+          const currentVal = input.value.split(',').pop().trim();
+          if (currentVal.length < 1) {
+            suggestionsBox.innerHTML = '';
+            return;
+          }
+    
+          fetch(`/users/search-users/?q=${currentVal}`)
+            .then(res => res.json())
+            .then(data => {
+              suggestionsBox.innerHTML = '';
+              data.forEach(user => {
+                const div = document.createElement("div");
+                div.textContent = user.username;
+                div.classList.add("autocomplete-suggestion", "p-1", "border", "bg-light");
+                div.style.cursor = 'pointer';
+    
+                div.addEventListener("click", function () {
+                  const parts = input.value.split(',');
+                  parts[parts.length - 1] = user.username;
+                  input.value = parts.join(', ').replace(/\s+/g, ' ').trim() + ', ';
+                  suggestionsBox.innerHTML = '';
+                });
+    
+                suggestionsBox.appendChild(div);
+              });
+            });
+        });
+    
+        input.addEventListener("blur", () => setTimeout(() => suggestionsBox.innerHTML = '', 300));
+      });
+    });
+    </script>
+    
 {% endblock %}
+
 
