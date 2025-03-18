@@ -5,7 +5,7 @@ from .views import CatalogView, GameDetailView, GameCreateView, GameEditView, Ga
 
 
 urlpatterns = [
-    path('catalog/', CatalogView.as_view(), name='catalog'),
+    path('', CatalogView.as_view(), name='catalog'),
     path('game/<int:pk>/', GameDetailView.as_view(), name='game_detail'),
     path('game/create/', GameCreateView.as_view(), name='game_create'),
     path('game/<int:pk>/edit/', GameEditView.as_view(), name='game_edit'),
