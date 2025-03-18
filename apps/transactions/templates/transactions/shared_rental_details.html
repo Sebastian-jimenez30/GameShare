@@ -27,12 +27,19 @@
     <p>¡Has pagado! Puedes descargar el juego.</p>
 {% else %}
     <p>Tu pago está pendiente. Haz clic en el botón para completar el pago.</p>
-    {% if user_has_paid == False %}
-    <form method="post" href="#">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-outline-success btn-sm">Pagar</button>
-    </form>
-    {% endif %}
+    {% for payment in pending_users %}
+        {% if payment.user == request.user %}
+            <form method="post" action="{% url 'complete_shared_payment' payment.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-success btn-sm">Pagar</button>
+            </form>
+        {% endif %}
+    {% endfor %}
 {% endif %}
+
+<!-- Botón para volver a la biblioteca -->
+<div class="mt-4">
+    <a href="{% url 'user_library' %}" class="btn btn-primary">📚 Volver a la Biblioteca</a>
+</div>
 
 {% endblock %}

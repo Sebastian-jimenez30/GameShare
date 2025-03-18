@@ -6,6 +6,7 @@ from django.views.generic import TemplateView, DetailView
 from django.views import View
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.utils.timezone import now
 
 from .models import SharedRental
 from .services import TransactionService
@@ -89,13 +90,35 @@ class SharedRentalDetailsView(LoginRequiredMixin, DetailView):
         shared_rental = self.get_object()
 
         payments = shared_rental.sharedrentalpayment_set.all()
+        user_payment = payments.filter(user=self.request.user).first()  # Obtener el pago del usuario actual
 
         context.update({
             'paid_users': payments.filter(status='completed'),
             'pending_users': payments.filter(status='pending'),
-            'user_has_paid': payments.filter(user=self.request.user, status='completed').exists(),
+            'user_has_paid': user_payment.status == 'completed' if user_payment else False,
+            'user_payment_id': user_payment.id if user_payment else None  # Agregar ID del pago del usuario
         })
         return context
+    
+class CompleteSharedPaymentView(View):
+    def post(self, request, payment_id):
+        payment = transaction_service.shared_payment_repo.get_shared_rental_payment_by_id(payment_id)
+
+        if not payment:
+            messages.error(request, "El pago no existe.")
+            return redirect('user_library')
+
+        if payment.status == 'completed':
+            messages.info(request, "Este pago ya ha sido completado.")
+            return redirect('shared_rental_details', pk=payment.shared_rental.id)
+
+        # Marcar el pago como completado
+        payment.status = 'completed'
+        payment.payment_date = now()
+        payment.save()
+
+        messages.success(request, "Pago completado exitosamente.")
+        return redirect('shared_rental_details', pk=payment.shared_rental.id)
     
 class UpdateCartItemTypeView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):

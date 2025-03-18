@@ -67,17 +67,35 @@ class PurchaseRepository(IPurchaseRepository):
 
 class SharedRentalRepository(ISharedRentalRepository):
     def create_shared_rental(self, shared_rental_data: dict) -> SharedRental:
-        return SharedRental.objects.create(**shared_rental_data)
+        """
+        Crea un alquiler compartido y lo asocia con los usuarios correctos.
+        """
+        users = shared_rental_data.pop("users", [])
+        shared_rental = SharedRental.objects.create(**shared_rental_data)
+
+        for user in users:
+            SharedRentalPayment.objects.create(
+                shared_rental=shared_rental,
+                user=user,
+                amount=shared_rental.game.price / len(users),
+                status="pending"
+            )
+
+        return shared_rental
 
     def get_shared_rental_by_id(self, shared_rental_id: int) -> Optional[SharedRental]:
-        return SharedRental.objects.filter(id=shared_rental_id).first()
+        return SharedRental.objects.filter(id=shared_rental_id).select_related("game").first()
 
     def delete_shared_rental(self, shared_rental_id: int) -> bool:
         deleted, _ = SharedRental.objects.filter(id=shared_rental_id).delete()
         return deleted > 0
 
-    def list_shared_rentals(self) -> List[SharedRental]:
-        return list(SharedRental.objects.all())
+    def list_shared_rentals(self, user: User) -> List[SharedRental]:
+        """
+        Retorna solo las rentas compartidas en las que el usuario está involucrado.
+        """
+        shared_rental_ids = SharedRentalPayment.objects.filter(user=user).values_list("shared_rental_id", flat=True)
+        return list(SharedRental.objects.filter(id__in=shared_rental_ids).select_related("game"))
 
     def update_shared_rental(self, shared_rental_id: int, data: dict) -> Optional[SharedRental]:
         shared_rental = self.get_shared_rental_by_id(shared_rental_id)
