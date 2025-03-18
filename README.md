@@ -38,6 +38,7 @@ pip install -r requirements.txt
 
 ### Set Up the Database
 ```sh
+python manage.py makemigrations
 python manage.py migrate
 ```
 
@@ -111,15 +112,6 @@ Log in using the superuser credentials created earlier.
 - View purchased and rented games
 - Download available games
 
-## Deployment
-For deployment, configure settings in `settings.py`:
-- Set `DEBUG = False`
-- Configure `ALLOWED_HOSTS`
-- Set up a production database
-- Use `whitenoise` for static files
-
-## License
-This project is licensed under the MIT License.
 
 
 
