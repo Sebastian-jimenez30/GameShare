@@ -1,28 +1,60 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Iniciar Sesión{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Iniciar Sesión</h2>
+<div class="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8">
+    <div class="sm:mx-auto sm:w-full sm:max-w-md">
+        <img class="mx-auto h-12 w-auto" src="{% static 'images/logo.svg' %}" alt="GameShare Logo">
+        <h2 class="mt-6 text-center text-2xl font-bold tracking-tight text-gray-900">
+            Iniciar Sesión
+        </h2>
+    </div>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Ingresar</button>
-    </form>
+    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div class="bg-white py-8 px-6 shadow rounded-lg sm:px-10">
+            <form class="space-y-6" method="post">
+                {% csrf_token %}
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Usuario</label>
+                    <div class="mt-1">
+                        <input type="text" name="username" id="username" autocomplete="username" required
+                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                </div>
 
-    {% if messages %}
-        <div class="mt-3">
-            {% for message in messages %}
-                <p class="text-danger">{{ message }}</p>
-            {% endfor %}
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                    <div class="mt-1">
+                        <input type="password" name="password" id="password" autocomplete="current-password" required
+                               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                </div>
+
+                {% if messages %}
+                    <div class="mt-2 text-center text-red-500 text-sm">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div>
+                    <button type="submit"
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        Ingresar
+                    </button>
+                </div>
+            </form>
+
+            <p class="mt-6 text-center text-sm text-gray-600">
+                ¿No tienes cuenta?
+                <a href="{% url 'user_register_form' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    Regístrate aquí
+                </a>
+            </p>
         </div>
-    {% endif %}
-
-    <div class="mt-3">
-        <p>¿No tienes cuenta? <a href="{% url 'user_register_form' %}">Regístrate aquí</a></p>
     </div>
 </div>
 {% endblock %}
-
