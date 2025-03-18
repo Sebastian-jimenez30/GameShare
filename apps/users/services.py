@@ -41,3 +41,4 @@ class UserSearchService:
 
     def search_users(self, query: str, exclude_user_id: int):
         return self.user_search_repo.search_users(query, exclude_user_id)    
+    

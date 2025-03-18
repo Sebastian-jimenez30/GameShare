@@ -19,18 +19,6 @@ customer_repo = CustomerRepository()
 admin_repo = AdminRepository()
 user_service = UserService(user_repo, customer_repo, admin_repo)
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [AllowAny]
-
-class CustomerViewSet(viewsets.ModelViewSet):
-    queryset = Customer.objects.all()
-    serializer_class = CustomerSerializer
-
-class AdminProfileViewSet(viewsets.ModelViewSet):
-    queryset = AdminProfile.objects.all()
-    serializer_class = AdminProfileSerializer
 
 class UserRegistrationView(FormView):
     template_name = "users/register_form.html"
