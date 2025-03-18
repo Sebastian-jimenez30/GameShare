@@ -47,6 +47,10 @@
           <p class="card-text">Desarrollador: {{ shared_rental.game.developer }}</p>
           <p class="text-success">✅ Disponible para descarga (todos han pagado)</p>
           <button type="submit" class="btn btn-outline-success btn-sm">Descargar</button>
+          <!-- Nuevo botón para ver detalles -->
+          <a class="btn btn-outline-primary btn-sm mt-2" href="{% url 'shared_rental_details' pk=shared_rental.id %}">
+            Ver detalles
+          </a>
         </div>
       </div>
     </div>
@@ -71,4 +75,5 @@
     <p>No tienes juegos rentados compartidos aún.</p>
   {% endif %}
 </div>
+
 {% endblock %}

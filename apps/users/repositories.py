@@ -43,19 +43,24 @@ class UserLibraryRepository(IUserLibraryRepository):
         return [rental.game for rental in rentals]
 
     def get_shared_rentals(self, user):
-        shared_rentals = SharedRental.objects.filter(users=user).select_related('game')
+
+        # Buscamos los pagos del usuario en rentas compartidas
+        shared_payments = SharedRentalPayment.objects.filter(user=user).select_related('shared_rental__game')
 
         available_shared_rentals = []
         unavailable_shared_rentals = []
 
-        for shared_rental in shared_rentals:
+        for payment in shared_payments:
+            shared_rental = payment.shared_rental
             payments = SharedRentalPayment.objects.filter(shared_rental=shared_rental)
-            all_paid = not payments.filter(~Q(status='completed')).exists()
+
+            # Verificamos si todos los usuarios han completado el pago
+            all_paid = not payments.exclude(status='completed').exists()
 
             if all_paid:
-                available_shared_rentals.append(shared_rental.game)
+                available_shared_rentals.append(shared_rental)
             else:
-                unavailable_shared_rentals.append(shared_rental.game)
+                unavailable_shared_rentals.append(shared_rental)
 
         return {
             "available": available_shared_rentals,
