@@ -265,9 +265,6 @@ class RemoveSharedUserFromCartItemView(LoginRequiredMixin, View):
         messages.success(request, f"Usuario {user_to_remove.username} eliminado del grupo compartido.")
         return redirect('cart_view')
 
-
-
-    
 class CheckoutCartView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         cart = get_object_or_404(Cart, user=request.user)
@@ -303,7 +300,6 @@ class CheckoutCartView(LoginRequiredMixin, View):
         cart.save()
 
         return redirect('catalog')
-
 
 class SharedRentalDetailsView(LoginRequiredMixin, DetailView):
     model = SharedRental
