@@ -17,6 +17,9 @@
       
       <a href="{% url 'game_detail' game.id %}" class="card mb-3 text-decoration-none"> <!-- Esto convierte toda la tarjeta en un enlace -->
         <div class="card-body">
+          {% if game.image %}
+            <img src="{{ game.image.url }}" alt="{{ game.title }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+          {% endif %}
           <h5 class="card-title">{{ game.title }}</h5>
           <p class="card-text"><strong>Developer:</strong> {{ game.developer }}</p>
           <p class="card-text"><strong>Price:</strong> ${{ game.price }}</p>

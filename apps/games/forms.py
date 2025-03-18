@@ -11,6 +11,8 @@ class GameForm(forms.ModelForm):
     class Meta:
         model = Game
         fields = ['title', 'developer', 'year', 'price', 'image', 'categories']  # Asegúrate de incluir 'categories'
+    
+    image = forms.ImageField(required=False)
 
 class ReviewForm(forms.ModelForm):
     class Meta:
