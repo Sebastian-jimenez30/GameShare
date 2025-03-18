@@ -21,7 +21,7 @@ Ensure you have the following installed:
 
 ### Clone the Repository
 ```sh
-git clone [https://github.com/yourusername/GameShare.git](https://github.com/Sebastian-jimenez30/GameRent.git)
+git clone https://github.com/Sebastian-jimenez30/GameRent.git
 cd GameShare
 ```
 
