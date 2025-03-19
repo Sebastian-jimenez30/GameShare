@@ -22,12 +22,15 @@ class GameRepository(IGameRepository):
 
     def update_game(self, game_id: int, game_data: dict) -> Game:
         game = self.get_game_by_id(game_id)
+        
         if game:
+            # Actualizamos los datos del juego con los nuevos valores
             for key, value in game_data.items():
                 setattr(game, key, value)
             game.save()
+        
         return game
-
+    
     def delete_game(self, game_id: int) -> bool:
         game = self.get_game_by_id(game_id)
         if game:

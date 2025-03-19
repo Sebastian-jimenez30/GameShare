@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'tailwind',
     'theme',
+    'widget_tweaks',
 
     # Apps propias
     'apps.users',

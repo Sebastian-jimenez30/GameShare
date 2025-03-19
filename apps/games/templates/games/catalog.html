@@ -6,10 +6,27 @@
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
     <h2 class="text-3xl font-bold tracking-tight text-gray-200 text-center mb-6">Catálogo de Juegos</h2>
 
-    <div class="overflow-x-auto whitespace-nowrap scrollbar-hide">
-      <div class="flex space-x-6">
+    <!-- Verificación si el usuario es admin y mostrar los botones CRUD -->
+    {% if user.is_superuser %}
+      <div class="text-right mb-6">
+        <a href="{% url 'game_create' %}" class="text-white bg-purple-600 hover:bg-purple-700 py-2 px-6 rounded-md text-sm">Agregar Juego</a>
+      </div>
+    {% endif %}
+
+    <!-- Contenedor del carrusel -->
+    <div class="relative overflow-hidden">
+      <!-- Botones de navegación -->
+      <button id="prevButton" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 z-10">
+        &lt;
+      </button>
+      <button id="nextButton" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 z-10">
+        &gt;
+      </button>
+
+      <!-- Carrusel -->
+      <div id="carousel" class="flex space-x-6 overflow-x-auto scroll-smooth scrollbar-hide">
         {% for game in games %}
-          <div class="bg-gray-800 p-4 shadow-lg rounded-lg min-w-[250px] max-w-[250px] hover:shadow-xl transition">
+          <div class="bg-gray-800 p-4 shadow-lg rounded-lg min-w-[250px] max-w-[250px] hover:shadow-xl transition flex-shrink-0">
             <a href="{% url 'game_detail' game.id %}" class="block">
               {% if game.image %}
                 <img src="{{ game.image.url }}" alt="{{ game.title }}" class="w-full h-48 object-cover rounded-md mb-3">
@@ -28,7 +45,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="game_id" value="{{ game.id }}">
                 <input type="hidden" name="item_type" value="rent">
-                <button type="submit" class="w-full py-2 text-sm bg-yellow-500 text-white font-medium rounded-md hover:bg-yellow-600 transition">
+                <button type="submit" class="w-full py-2 text-sm bg-purple-600 text-white font-medium rounded-md hover:bg-purple-700 transition">
                   Rentar
                 </button>
               </form>
@@ -38,7 +55,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="game_id" value="{{ game.id }}">
                 <input type="hidden" name="item_type" value="purchase">
-                <button type="submit" class="w-full py-2 text-sm bg-green-500 text-white font-medium rounded-md hover:bg-green-600 transition">
+                <button type="submit" class="w-full py-2 text-sm bg-gray-700 text-white font-medium rounded-md hover:bg-gray-800 transition">
                   Comprar
                 </button>
               </form>
@@ -48,10 +65,28 @@
                 {% csrf_token %}
                 <input type="hidden" name="game_id" value="{{ game.id }}">
                 <input type="hidden" name="item_type" value="shared">
-                <button type="submit" class="w-full py-2 text-sm bg-blue-500 text-white font-medium rounded-md hover:bg-blue-600 transition">
+                <button type="submit" class="w-full py-2 text-sm bg-blue-700 text-white font-medium rounded-md hover:bg-blue-800 transition">
                   Renta Compartida
                 </button>
               </form>
+
+              <!-- Botones CRUD para admin -->
+              {% if user.is_superuser %}
+                <div class="mt-4 flex justify-between space-x-2">
+                  <!-- Editar Juego -->
+                  <a href="{% url 'game_edit' game.id %}" class="w-1/2 py-2 text-sm bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 transition">
+                    Editar
+                  </a>
+
+                  <!-- Eliminar Juego -->
+                  <form action="{% url 'game_delete' game.id %}" method="post" style="display:inline;" class="w-1/2">
+                    {% csrf_token %}
+                    <button type="submit" class="py-2 text-sm bg-red-600 text-white font-medium rounded-md hover:bg-red-700 transition">
+                      Eliminar
+                    </button>
+                  </form>
+                </div>
+              {% endif %}
             </div>
           </div>
         {% empty %}
@@ -61,4 +96,19 @@
     </div>
   </div>
 </div>
+
+<!-- Script para el carrusel -->
+<script>
+  const carousel = document.getElementById('carousel');
+  const prevButton = document.getElementById('prevButton');
+  const nextButton = document.getElementById('nextButton');
+
+  nextButton.addEventListener('click', () => {
+    carousel.scrollBy({ left: 300, behavior: 'smooth' });
+  });
+
+  prevButton.addEventListener('click', () => {
+    carousel.scrollBy({ left: -300, behavior: 'smooth' });
+  });
+</script>
 {% endblock %}
