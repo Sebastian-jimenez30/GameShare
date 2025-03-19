@@ -1,126 +1,91 @@
-{% extends "base.html" %}
-
-{% block title %}Mi Carrito{% endblock %}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-  <h2>Mi Carrito</h2>
+<section class="bg-gray-900 py-12 antialiased md:py-16">
+  <div class="mx-auto max-w-screen-xl px-6 2xl:px-0">
+    <h2 class="text-3xl font-bold tracking-tight text-gray-200 sm:text-4xl">Mi Carrito</h2>
 
-  {% if items %}
-    <table class="table table-bordered mt-4">
-      <thead>
-        <tr>
-          <th>Juego</th>
-          <th>Tipo</th>
-          <th>Precio</th>
-          <th>Cantidad</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for item in items %}
-        <tr>
-          <td>{{ item.game.title }}</td>
-          <td>
-            <form action="{% url 'update_cart_item_type' item.id %}" method="post" class="d-inline">
-              {% csrf_token %}
-              <select name="item_type" onchange="this.form.submit()" class="form-select form-select-sm">
-                <option value="rent" {% if item.item_type == 'rent' %}selected{% endif %}>Renta</option>
-                <option value="purchase" {% if item.item_type == 'purchase' %}selected{% endif %}>Compra</option>
-                <option value="shared" {% if item.item_type == 'shared' %}selected{% endif %}>Renta Compartida</option>
-              </select>
-            </form>
-          </td>
-          <td>${{ item.game.price }}</td>
-          <td>{{ item.quantity }}</td>
-          <td>
-            <form method="post" action="{% url 'remove_from_cart' item.id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
-            </form>
-
-            {% if item.item_type == 'shared' %}
-                {% if item.shared_users.all %}
-                    <div class="mt-2 small">
-                        <strong>Usuarios seleccionados:</strong>
-                        <ul class="list-group list-group-sm">
-                        {% for user in item.shared_users.all %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center py-1">
-                            {{ user.username }}
-                            <form method="post" action="{% url 'remove_shared_user' item.id user.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-outline-danger btn-sm">✕</button>
-                            </form>
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                {% endif %}
-                <form method="post" action="{% url 'update_shared_users' item.id %}" class="mt-2">
+    <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
+      <!-- Lista de juegos en el carrito -->
+      <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
+        <div class="space-y-6">
+          {% for item in items %}
+          <div class="rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-sm md:p-6">
+            <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+              <!-- Reutilizando el componente GameCard -->
+              {% include "components/game_card.html" with game=item.game game_url="#" actions="cart" item_id=item.id item_type=item.item_type %}
+              
+              <div class="flex items-center justify-between md:order-3 md:justify-end">
+                <div class="flex items-center">
+                  <form action="{% url 'update_cart_item_type' item.id %}" method="post" class="d-inline">
                     {% csrf_token %}
-                    <label>Usuarios para compartir (usernames separados por coma):</label>
-                    <input type="text" name="usernames" class="form-control form-control-sm mb-1 user-autocomplete"
-                        placeholder="ej: juan,marco,luis" data-item-id="{{ item.id }}">
-                    <div class="autocomplete-suggestions mt-1" id="autocomplete-list-{{ item.id }}"></div>
-                    <button type="submit" class="btn btn-sm btn-outline-primary">Guardar Usuarios</button>
+                    <select name="item_type" onchange="this.form.submit()" class="form-select form-select-sm text-gray-900 dark:text-white bg-gray-700 border border-gray-600 rounded-md px-3 py-2">
+                      <option value="rent" {% if item.item_type == 'rent' %}selected{% endif %}>Renta</option>
+                      <option value="purchase" {% if item.item_type == 'purchase' %}selected{% endif %}>Compra</option>
+                      <option value="shared" {% if item.item_type == 'shared' %}selected{% endif %}>Renta Compartida</option>
+                    </select>
+                  </form>
+                </div>
+                <div class="text-end md:order-4 md:w-32">
+                  <p class="text-base font-bold text-gray-200">${{ item.game.price }}</p>
+                </div>
+              </div>
+
+              <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
+                {% if item.item_type == 'shared' %}
+                  {% if item.shared_users.all %}
+                    <div class="mt-2 text-gray-300">
+                      <strong>Usuarios compartidos:</strong>
+                      <ul class="list-disc pl-5">
+                        {% for user in item.shared_users.all %}
+                          <li class="flex justify-between">{{ user.username }}
+                            <form method="post" action="{% url 'remove_shared_user' item.id user.id %}">
+                              {% csrf_token %}
+                              <button type="submit" class="text-red-500 hover:text-red-700">✕</button>
+                            </form>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  {% endif %}
+                  <form method="post" action="{% url 'update_shared_users' item.id %}" class="mt-2">
+                    {% csrf_token %}
+                    <label class="text-gray-400">Añadir usuarios (usernames separados por coma):</label>
+                    <input type="text" name="usernames" class="w-full bg-gray-700 text-white rounded-md px-3 py-2 mt-2" placeholder="ej: juan,marco,luis">
+                    <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Guardar Usuarios</button>
+                  </form>
+                {% endif %}
+                <form method="post" action="{% url 'remove_from_cart' item.id %}" class="mt-2">
+                  {% csrf_token %}
+                  <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
                 </form>
-            {% endif %}
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <p class="text-center text-gray-400 text-lg">Tu carrito está vacío.</p>
+          {% endfor %}
+        </div>
+      </div>
 
-    <h4>Total: ${{ cart.total }}</h4>
-
-    <form method="post" action="{% url 'checkout_cart' %}">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-primary mt-3">Finalizar Compra</button>
-    </form>
-
-  {% else %}
-    <p>Tu carrito está vacío.</p>
-  {% endif %}
-</div>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-      document.querySelectorAll('.user-autocomplete').forEach(function(input) {
-        const suggestionsBox = document.getElementById(`autocomplete-list-${input.dataset.itemId}`);
-    
-        input.addEventListener("input", function () {
-          const currentVal = input.value.split(',').pop().trim();
-          if (currentVal.length < 1) {
-            suggestionsBox.innerHTML = '';
-            return;
-          }
-    
-          fetch(`/users/search-users/?q=${currentVal}`)
-            .then(res => res.json())
-            .then(data => {
-              suggestionsBox.innerHTML = '';
-              data.forEach(user => {
-                const div = document.createElement("div");
-                div.textContent = user.username;
-                div.classList.add("autocomplete-suggestion", "p-1", "border", "bg-light");
-                div.style.cursor = 'pointer';
-    
-                div.addEventListener("click", function () {
-                  const parts = input.value.split(',');
-                  parts[parts.length - 1] = user.username;
-                  input.value = parts.join(', ').replace(/\s+/g, ' ').trim() + ', ';
-                  suggestionsBox.innerHTML = '';
-                });
-    
-                suggestionsBox.appendChild(div);
-              });
-            });
-        });
-    
-        input.addEventListener("blur", () => setTimeout(() => suggestionsBox.innerHTML = '', 300));
-      });
-    });
-    </script>
-    
+      <!-- Resumen del pedido -->
+      <div class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
+        <div class="space-y-4 rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-sm sm:p-6">
+          <p class="text-xl font-semibold text-gray-200">Resumen del Pedido</p>
+          <div class="space-y-4">
+            <dl class="flex items-center justify-between gap-4">
+              <dt class="text-base font-normal text-gray-400">Total</dt>
+              <dd class="text-base font-bold text-gray-200">${{ cart.total }}</dd>
+            </dl>
+          </div>
+          <form method="post" action="{% url 'checkout_cart' %}">
+            {% csrf_token %}
+            <button type="submit" class="w-full px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700">Finalizar Compra</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}
-
-

@@ -7,74 +7,74 @@
 <div class="flex min-h-screen flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-lg">
         <img class="mx-auto h-12 w-auto" src="{% static 'images/logo.svg' %}" alt="GameShare Logo">
-        <h2 class="mt-6 text-center text-2xl font-bold tracking-tight text-gray-900">
+        <h2 class="mt-6 text-center text-2xl font-bold tracking-tight text-gray-200">
             Registro de Usuario
         </h2>
     </div>
 
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-lg">
-        <div class="bg-white py-8 px-6 shadow-md rounded-lg sm:px-10">
+        <div class="bg-gray-800 py-8 px-6 shadow-lg rounded-lg sm:px-10">
             <form class="space-y-6" method="post">
                 {% csrf_token %}
 
                 <!-- Sección de datos de usuario -->
-                <div class="border-b pb-4">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Datos de Usuario</h3>
+                <div class="border-b border-gray-600 pb-4">
+                    <h3 class="text-lg font-semibold text-gray-300 mb-3">Datos de Usuario</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="username" class="block text-sm font-medium text-gray-700">Usuario</label>
+                            <label for="username" class="block text-sm font-medium text-gray-300">Usuario</label>
                             <input type="text" name="username" id="username" required
-                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                   class="block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         </div>
 
                         <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <label for="email" class="block text-sm font-medium text-gray-300">Email</label>
                             <input type="email" name="email" id="email" required
-                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                   class="block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         </div>
 
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
+                            <label for="name" class="block text-sm font-medium text-gray-300">Nombre</label>
                             <input type="text" name="name" id="name" required
-                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                   class="block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         </div>
 
                         <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                            <label for="password" class="block text-sm font-medium text-gray-300">Contraseña</label>
                             <input type="password" name="password" id="password" required
-                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                   class="block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         </div>
                     </div>
                 </div>
 
                 <!-- Sección de datos de hardware -->
                 <div>
-                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Datos de Hardware</h3>
+                    <h3 class="text-lg font-semibold text-gray-300 mb-3">Datos de Hardware</h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="processor" class="block text-sm font-medium text-gray-700">Procesador</label>
+                            <label for="processor" class="block text-sm font-medium text-gray-300">Procesador</label>
                             <input type="text" name="processor" id="processor" required
-                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                   class="block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         </div>
 
                         <div>
-                            <label for="ram_gb" class="block text-sm font-medium text-gray-700">RAM (GB)</label>
+                            <label for="ram_gb" class="block text-sm font-medium text-gray-300">RAM (GB)</label>
                             <input type="number" name="ram_gb" id="ram_gb" required
-                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                   class="block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         </div>
 
                         <div class="md:col-span-2">
-                            <label for="graphics_card" class="block text-sm font-medium text-gray-700">Tarjeta Gráfica</label>
+                            <label for="graphics_card" class="block text-sm font-medium text-gray-300">Tarjeta Gráfica</label>
                             <input type="text" name="graphics_card" id="graphics_card" required
-                                   class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                   class="block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         </div>
                     </div>
                 </div>
 
                 {% if messages %}
-                    <div class="mt-2 text-center text-red-500 text-sm">
+                    <div class="mt-2 text-center text-red-400 text-sm">
                         {% for message in messages %}
                             <p>{{ message }}</p>
                         {% endfor %}
@@ -83,15 +83,15 @@
 
                 <div>
                     <button type="submit"
-                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-white bg-purple-700 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500">
                         Registrarse
                     </button>
                 </div>
             </form>
 
-            <p class="mt-6 text-center text-sm text-gray-600">
+            <p class="mt-6 text-center text-sm text-gray-400">
                 ¿Ya tienes una cuenta?
-                <a href="{% url 'user_login_form' %}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                <a href="{% url 'user_login_form' %}" class="font-medium text-purple-400 hover:text-purple-300">
                     Inicia sesión aquí
                 </a>
             </p>

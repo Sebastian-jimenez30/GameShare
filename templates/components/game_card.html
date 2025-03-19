@@ -1,0 +1,51 @@
+<div class="bg-gray-800 p-4 shadow-lg rounded-lg min-w-[250px] max-w-[250px] hover:shadow-xl transition">
+    <a href="{{ game_url }}" class="block">
+        {% if game.image %}
+            <img src="{{ game.image.url }}" alt="{{ game.title }}" class="w-full h-48 object-cover rounded-md mb-3">
+        {% else %}
+            <div class="w-full h-48 bg-gray-700 rounded-md flex items-center justify-center">
+                <span class="text-gray-400">Sin imagen</span>
+            </div>
+        {% endif %}
+        <h3 class="text-lg font-semibold text-gray-200">{{ game.title }}</h3>
+        <p class="text-sm text-gray-400">{{ game.developer }}</p>
+    </a>
+
+    <!-- Acciones dinámicas -->
+    <div class="mt-4 space-y-2">
+        {% if actions == "catalog" %}
+            <form action="{% url 'add_to_cart' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="game_id" value="{{ game.id }}">
+                <input type="hidden" name="item_type" value="rent">
+                <button type="submit" class="w-full py-2 text-sm bg-blue-700 text-white font-medium rounded-md hover:bg-blue-800 transition">
+                    Rentar
+                </button>
+            </form>
+
+            <form action="{% url 'add_to_cart' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="game_id" value="{{ game.id }}">
+                <input type="hidden" name="item_type" value="purchase">
+                <button type="submit" class="w-full py-2 text-sm bg-green-700 text-white font-medium rounded-md hover:bg-green-800 transition">
+                    Comprar
+                </button>
+            </form>
+
+        {% elif actions == "library" %}
+            <button class="mt-2 text-blue-400 hover:text-blue-300">Instalar</button>
+
+        {% elif actions == "shared_available" %}
+            <button class="mt-2 text-blue-400 hover:text-blue-300">Descargar</button>
+            <a class="text-sm text-purple-400 hover:text-purple-300 mt-2" href="{% url 'shared_rental_details' pk=game.id %}">
+                Ver detalles
+            </a>
+
+        {% elif actions == "shared_unavailable" %}
+            <p class="text-red-400">No disponible (pagos pendientes)</p>
+            <a class="text-sm text-purple-400 hover:text-purple-300 mt-2" href="{% url 'shared_rental_details' pk=game.id %}">
+                Ver detalles
+            </a>
+        {% endif %}
+    </div>
+</div>

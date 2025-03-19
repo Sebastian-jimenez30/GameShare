@@ -23,9 +23,13 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('apps.users.urls')),
-    path('users/', include('apps.users.urls')),
-    path('', include('apps.games.urls')),
+    path('', include('apps.users.urls')),
+    path('api/games/', include('apps.games.urls')),
+    path('games/', include('apps.games.urls')),
     path('api/transactions/', include('apps.transactions.urls')),
     path('logout/', auth_views.LogoutView.as_view(next_page='user_login_form'), name='logout'),
 
+    # Swagger and Redoc
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
