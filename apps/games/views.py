@@ -74,20 +74,23 @@ class GameEditView(UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         return self.request.user.is_superuser  
-    
+
     def get_object(self):
         return game_service.get_game_by_id(self.kwargs.get("pk"))
 
-def form_valid(self, form):
-    game = self.get_object()
-    game_data = form.cleaned_data
-    categories = game_data.pop('categories', None)  #
+    def form_valid(self, form):
+        game = self.get_object()
+        game_data = form.cleaned_data
+        categories = game_data.pop('categories', None)  # Obtenemos las categorías seleccionadas
 
-    category_ids = [cat.id for cat in categories] if categories else []
+        category_ids = [cat.id for cat in categories] if categories else []
 
-    game_service.update_game(game.id, game_data, category_ids)
+        # Actualizamos los datos del juego, pero solo si hay cambios en las categorías
+        game_service.update_game(game.id, game_data, category_ids)
 
-    return redirect('catalog')
+        return redirect(self.success_url)
+
+
 
 
 class GameDeleteView(UserPassesTestMixin, DeleteView):

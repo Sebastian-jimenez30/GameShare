@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpRequest
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View, FormView
+from django.shortcuts import render
 
 from .forms import UserRegisterForm, UserLoginForm
 from .services import UserService, UserLibraryService, UserSearchService
@@ -15,6 +16,9 @@ from .repositories import (
     UserLibraryRepository, 
     UserSearchRepository
 )
+
+def landing_page(request):
+    return render(request, 'users/landing.html')
 
 user_service = UserService(UserRepository(), CustomerRepository(), AdminRepository())
 library_service = UserLibraryService(UserLibraryRepository())

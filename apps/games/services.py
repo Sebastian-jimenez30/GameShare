@@ -6,6 +6,7 @@ from .interfaces import (
     IReviewRepository
 )
 from typing import List
+from .models import Game
 
 
 class GameService:
@@ -19,12 +20,17 @@ class GameService:
             self.game_category_repo.assign_category_to_game(game.id, category_id)
         return game
 
-    def update_game(self, game_id: int, game_data: dict, category_ids: List[int]):
+    def update_game(self, game_id: int, game_data: dict, category_ids: List[int] = None) -> Game:
         game = self.game_repo.update_game(game_id, game_data)
+        
         if game:
-            self.game_category_repo.remove_category_from_game(game_id, category_ids)
-            for category_id in category_ids:
-                self.game_category_repo.assign_category_to_game(game_id, category_id)
+            # Solo actualizamos las categorías si 'category_ids' no está vacío
+            if category_ids:
+                # Eliminar las categorías anteriores y asignar las nuevas
+                self.game_category_repo.remove_category_from_game(game_id, category_ids)
+                for category_id in category_ids:
+                    self.game_category_repo.assign_category_to_game(game_id, category_id)
+
         return game
 
     def delete_game(self, game_id: int) -> bool:
