@@ -43,7 +43,7 @@
 
         {% elif actions == "shared_unavailable" %}
             <p class="text-red-400">No disponible (pagos pendientes)</p>
-            <a class="text-sm text-purple-400 hover:text-purple-300 mt-2" href="{% url 'shared_rental_details' pk=game.id %}">
+            <a class="text-sm text-purple-400 hover:text-purple-300 mt-2" href="{% url 'shared_rental_details' pk=shared_rental.id %}">
                 Ver detalles
             </a>
         {% endif %}
