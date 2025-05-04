@@ -6,6 +6,7 @@
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
     <h2 class="text-4xl font-bold tracking-tight text-gray-200 mb-8">Mi Biblioteca</h2>
 
+    <!-- Filtros -->
     <div class="flex space-x-6 text-gray-400 mb-8 border-b border-gray-700 pb-4">
       <button class="category-btn border-b-2 border-blue-500 pb-2 text-white" data-filter="all">Todos</button>
       <button class="category-btn hover:text-gray-300" data-filter="comprados">Comprados</button>
@@ -26,7 +27,7 @@
     </div>
 
     <!-- Juegos Rentados -->
-    <div class="category-section hidden" data-category="rentados">
+    <div class="category-section" data-category="rentados">
       <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">Juegos Rentados</h3>
       <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
         {% for game in rented_games %}
@@ -38,46 +39,63 @@
     </div>
 
     <!-- Juegos Rentados Compartidos -->
-    <div class="category-section hidden" data-category="rentados_compartidos">
+    <div class="category-section" data-category="rentados_compartidos">
       <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">Juegos Rentados Compartidos</h3>
-      <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
-        {% for shared_rental in available_shared_rentals %}
-          {% include "components/game_card.html" with game=shared_rental.game game_url="#" actions="shared_available" %}
-        {% endfor %}
-        
-        {% for shared_rental in unavailable_shared_rentals %}
-          {% include "components/game_card.html" with game=shared_rental.game game_url="#" actions="shared_unavailable" %}
-        {% endfor %}
 
-        {% if available_shared_rentals|length == 0 and unavailable_shared_rentals|length == 0 %}
-          <p class="text-center text-gray-400 text-lg">No tienes juegos rentados compartidos aún.</p>
-        {% endif %}
-      </div>
+      {% if available_shared_rentals %}
+        <h4 class="text-lg font-semibold text-green-400 mb-2">Disponibles</h4>
+        <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide mb-6">
+          {% for shared_rental in available_shared_rentals %}
+            {% include "components/game_card.html" with game=shared_rental.game game_url="#" actions="shared_available" %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if unavailable_shared_rentals %}
+        <h4 class="text-lg font-semibold text-yellow-400 mb-2">Pendientes de pago</h4>
+        <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
+          {% for shared_rental in unavailable_shared_rentals %}
+            {% include "components/game_card.html" with game=shared_rental.game game_url="#" actions="shared_unavailable" %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if available_shared_rentals|length == 0 and unavailable_shared_rentals|length == 0 %}
+        <p class="text-center text-gray-400 text-lg">No tienes juegos rentados compartidos aún.</p>
+      {% endif %}
     </div>
   </div>
 </div>
 
+<!-- Script -->
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener("DOMContentLoaded", function () {
     const buttons = document.querySelectorAll(".category-btn");
     const sections = document.querySelectorAll(".category-section");
-    
+
+    const activateAll = () => {
+      sections.forEach(section => section.classList.remove("hidden"));
+    };
+
     buttons.forEach(button => {
-      button.addEventListener("click", function() {
+      button.addEventListener("click", function () {
         const filter = this.getAttribute("data-filter");
-        
-        sections.forEach(section => {
-          if (filter === "all" || section.getAttribute("data-category") === filter) {
-            section.classList.remove("hidden");
-          } else {
-            section.classList.add("hidden");
-          }
-        });
+
+        if (filter === "all") {
+          activateAll();
+        } else {
+          sections.forEach(section => {
+            section.classList.toggle("hidden", section.getAttribute("data-category") !== filter);
+          });
+        }
 
         buttons.forEach(btn => btn.classList.remove("border-blue-500", "text-white"));
         this.classList.add("border-blue-500", "text-white");
       });
     });
+
+    // Mostrar todos al cargar
+    activateAll();
   });
 </script>
 {% endblock %}

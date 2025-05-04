@@ -4,12 +4,22 @@
 {% block content %}
 <section class="bg-gray-900 py-12 antialiased md:py-16">
   <div class="mx-auto max-w-screen-xl px-6 2xl:px-0">
-    <h2 class="text-3xl font-bold tracking-tight text-gray-200 sm:text-4xl">Detalles de Renta Compartida</h2>
+    <h2 class="text-3xl font-bold tracking-tight text-gray-200 sm:text-4xl mb-4">Detalles de Renta Compartida</h2>
+
+    <!-- Info general -->
+    <div class="mb-6 text-gray-400">
+      <p><strong class="text-purple-400">Juego:</strong> {{ shared_rental.game.title }}</p>
+      <p><strong class="text-purple-400">Creador:</strong> {{ shared_rental.created_by.username }}</p>
+      <p><strong class="text-purple-400">Inicio:</strong> {{ shared_rental.start_time|date:"d M Y H:i" }}</p>
+      <p><strong class="text-purple-400">Fin:</strong> {{ shared_rental.end_time|date:"d M Y H:i" }}</p>
+      <p><strong class="text-purple-400">Costo Total:</strong> ${{ shared_rental.total_cost }}</p>
+      <p><strong class="text-purple-400">Monto por Usuario:</strong> ${{ shared_rental.total_cost|divisibleby:shared_rental.payments.count }}</p>
+    </div>
 
     <div class="mt-6 space-y-8">
       <!-- Usuarios que han pagado -->
-      <div class="rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-sm">
-        <h3 class="text-2xl font-semibold text-gray-200">Usuarios que han pagado</h3>
+      <div class="rounded-lg border border-green-500 bg-gray-800 p-6 shadow-sm">
+        <h3 class="text-2xl font-semibold text-green-400">Usuarios que han pagado</h3>
         <ul class="mt-4 space-y-2">
           {% for payment in paid_users %}
             <li class="text-gray-300 flex justify-between border-b border-gray-700 pb-2">
@@ -23,8 +33,8 @@
       </div>
 
       <!-- Usuarios pendientes de pago -->
-      <div class="rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-sm">
-        <h3 class="text-2xl font-semibold text-gray-200">Usuarios pendientes de pago</h3>
+      <div class="rounded-lg border border-red-500 bg-gray-800 p-6 shadow-sm">
+        <h3 class="text-2xl font-semibold text-red-400">Usuarios pendientes de pago</h3>
         <ul class="mt-4 space-y-2">
           {% for payment in pending_users %}
             <li class="text-gray-300 flex justify-between border-b border-gray-700 pb-2">
@@ -37,28 +47,29 @@
         </ul>
       </div>
 
-      <!-- Estado de pago del usuario -->
-      <div class="rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-sm">
-        <h3 class="text-2xl font-semibold text-gray-200">Estado de tu pago</h3>
+      <!-- Estado del pago del usuario -->
+      <div class="rounded-lg border border-blue-500 bg-gray-800 p-6 shadow-sm">
+        <h3 class="text-2xl font-semibold text-blue-400">Estado de tu pago</h3>
+
         {% if user_has_paid %}
-          <p class="mt-4 text-green-400 font-medium">Has completado el pago. Puedes descargar el juego.</p>
+          <p class="mt-4 text-green-400 font-medium">✅ Has completado el pago. Puedes descargar el juego cuando esté disponible.</p>
         {% else %}
-          <p class="mt-4 text-gray-400">Tu pago está pendiente. Completa el pago para obtener acceso.</p>
-          {% for payment in pending_users %}
-            {% if payment.user == request.user %}
-              <form method="post" action="{% url 'complete_shared_payment' payment.id %}" class="mt-4">
-                {% csrf_token %}
-                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700">Completar Pago</button>
-              </form>
-            {% endif %}
-          {% endfor %}
+          <p class="mt-4 text-gray-300">Tu pago está pendiente. Completa el pago para acceder al juego.</p>
+          <form method="post" action="{% url 'complete_shared_payment' user_payment_id %}" class="mt-4">
+            {% csrf_token %}
+            <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700">
+              Completar Pago
+            </button>
+          </form>
         {% endif %}
       </div>
     </div>
 
-    <!-- Botón para volver a la biblioteca -->
-    <div class="mt-8 text-center">
-      <a href="{% url 'user_library' %}" class="px-6 py-3 bg-gray-700 text-white font-medium rounded-md hover:bg-gray-600">Volver a la Biblioteca</a>
+    <!-- Volver a biblioteca -->
+    <div class="mt-10 text-center">
+      <a href="{% url 'user_library' %}" class="px-6 py-3 bg-gray-700 text-white font-medium rounded-md hover:bg-gray-600">
+        Volver a la Biblioteca
+      </a>
     </div>
   </div>
 </section>

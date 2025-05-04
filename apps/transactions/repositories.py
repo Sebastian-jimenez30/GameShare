@@ -7,7 +7,7 @@ from apps.users.models import User
 from apps.games.models import Game
 
 from .models import (
-    Rental, Purchase, SharedRental, SharedRentalPayment,
+    Rental, Transaction, SharedRental, SharedRentalPayment,
     Cart, CartItem, Invoice, Payment
 )
 from .interfaces import (
@@ -37,32 +37,6 @@ class RentalRepository(IRentalRepository):
 
     def list_rentals(self) -> List[Rental]:
         return list(Rental.objects.all())
-
-
-class PurchaseRepository(IPurchaseRepository):
-    def create_purchase(self, purchase_data: dict) -> Purchase:
-        return Purchase.objects.create(**purchase_data)
-
-    def get_purchase_by_id(self, purchase_id: int) -> Optional[Purchase]:
-        return Purchase.objects.filter(id=purchase_id).first()
-
-    def purchase_exists(self, user: User, game: Game) -> bool:
-        return Purchase.objects.filter(user=user, game=game).exists()
-
-    def list_purchases(self) -> List[Purchase]:
-        return list(Purchase.objects.all())
-
-    def delete_purchase(self, purchase_id: int) -> bool:
-        deleted, _ = Purchase.objects.filter(id=purchase_id).delete()
-        return deleted > 0
-
-    def update_purchase(self, purchase_id: int, purchase_data: dict) -> Optional[Purchase]:
-        purchase = self.get_purchase_by_id(purchase_id)
-        if purchase:
-            for field, value in purchase_data.items():
-                setattr(purchase, field, value)
-            purchase.save()
-        return purchase
 
 
 class SharedRentalRepository(ISharedRentalRepository):
@@ -228,3 +202,30 @@ class PaymentRepository(IPaymentRepository):
                 setattr(payment, field, value)
             payment.save()
         return payment
+    
+from apps.transactions.models import Transaction
+
+class TransactionRepository:
+    def create_transaction(self, transaction_data: dict) -> Transaction:
+        return Transaction.objects.create(**transaction_data)
+
+    def get_transaction_by_id(self, transaction_id: int) -> Optional[Transaction]:
+        return Transaction.objects.filter(id=transaction_id).first()
+
+    def transaction_exists(self, user: User, game: Game, transaction_type: str) -> bool:
+        return Transaction.objects.filter(user=user, game=game, transaction_type=transaction_type).exists()
+
+    def list_transactions(self) -> List[Transaction]:
+        return list(Transaction.objects.all())
+
+    def delete_transaction(self, transaction_id: int) -> bool:
+        deleted, _ = Transaction.objects.filter(id=transaction_id).delete()
+        return deleted > 0
+
+    def update_transaction(self, transaction_id: int, transaction_data: dict) -> Optional[Transaction]:
+        transaction = self.get_transaction_by_id(transaction_id)
+        if transaction:
+            for field, value in transaction_data.items():
+                setattr(transaction, field, value)
+            transaction.save()
+        return transaction

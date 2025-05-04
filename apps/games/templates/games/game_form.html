@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
-{% block title %}Crear/Editar Juego{% endblock %}
+{% load widget_tweaks %}  {# Asegúrate de tener django-widget-tweaks instalado y cargado #}
+
+{% block title %}
+  {% if form.instance.pk %}Editar{% else %}Crear{% endif %} Juego
+{% endblock %}
 
 {% block content %}
 <div class="max-w-3xl mx-auto bg-gray-800 p-6 rounded-lg shadow-lg">
@@ -10,51 +14,98 @@
 
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    
-    <!-- Campo para el título del juego -->
-    <div class="mb-4">
-      <label for="id_title" class="block text-sm font-medium text-gray-200">Título</label>
-      <input type="text" name="title" id="id_title" value="{{ form.title.value }}" class="mt-1 block w-full px-4 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" />
-    </div>
 
-    <!-- Campo para el desarrollador del juego -->
-    <div class="mb-4">
-      <label for="id_developer" class="block text-sm font-medium text-gray-200">Desarrollador</label>
-      <input type="text" name="developer" id="id_developer" value="{{ form.developer.value }}" class="mt-1 block w-full px-4 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" />
-    </div>
+    <div class="space-y-4 text-gray-200">
+      <!-- Campos básicos -->
+      <div>
+        <label for="id_title" class="block text-sm font-medium mb-1">Título</label>
+        {{ form.title|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
+      </div>
 
-    <!-- Campo para el año del juego -->
-    <div class="mb-4">
-      <label for="id_year" class="block text-sm font-medium text-gray-200">Año</label>
-      <input type="number" name="year" id="id_year" value="{{ form.year.value }}" class="mt-1 block w-full px-4 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" />
-    </div>
+      <div>
+        <label for="id_developer" class="block text-sm font-medium mb-1">Desarrollador</label>
+        {{ form.developer|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
+      </div>
 
-    <!-- Campo para el precio del juego -->
-    <div class="mb-4">
-      <label for="id_price" class="block text-sm font-medium text-gray-200">Precio</label>
-      <input type="number" step="0.01" name="price" id="id_price" value="{{ form.price.value }}" class="mt-1 block w-full px-4 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" />
-    </div>
+      <div>
+        <label for="id_release_year" class="block text-sm font-medium mb-1">Año de Lanzamiento</label>
+        {{ form.release_year|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
+      </div>
 
-    <!-- Campo para la imagen del juego -->
-    <div class="mb-4">
-      <label for="id_image" class="block text-sm font-medium text-gray-200">Imagen</label>
-      <input type="file" name="image" id="id_image" class="mt-1 block w-full px-4 py-2 bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" />
-    </div>
+      <div>
+        <label for="id_purchase_price" class="block text-sm font-medium mb-1">Precio de Compra</label>
+        {{ form.purchase_price|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
+      </div>
 
-    <!-- Campo para las categorías del juego -->
-    <div class="mb-4">
-      <label for="id_categories" class="block text-sm font-medium text-gray-200">Categorías</label>
-      <div class="mt-2 space-y-2">
-        {% for checkbox in form.categories %}
-          <div class="flex items-center">
-            {{ checkbox.tag }}
-            <span class="ml-2 text-gray-200">{{ checkbox.choice_label }}</span>
-          </div>
-        {% endfor %}
+      <div>
+        <label for="id_rental_price_per_hour" class="block text-sm font-medium mb-1">Renta por Hora</label>
+        {{ form.rental_price_per_hour|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
+      </div>
+
+      <div>
+        <label for="id_rental_price_per_day" class="block text-sm font-medium mb-1">Renta por Día</label>
+        {{ form.rental_price_per_day|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
+      </div>
+
+      <!-- Requisitos Mínimos -->
+      <h3 class="text-xl font-semibold mt-6 text-purple-400">Requisitos Mínimos</h3>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Procesador</label>
+        {{ form.min_cpu|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">RAM (GB)</label>
+        {{ form.min_ram|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Tarjeta Gráfica</label>
+        {{ form.min_gpu|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
+      </div>
+
+      <!-- Requisitos Recomendados -->
+      <h3 class="text-xl font-semibold mt-6 text-purple-400">Requisitos Recomendados</h3>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Procesador</label>
+        {{ form.rec_cpu|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">RAM (GB)</label>
+        {{ form.rec_ram|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Tarjeta Gráfica</label>
+        {{ form.rec_gpu|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
+      </div>
+
+      <!-- Imagen -->
+      <div>
+        <label for="id_image" class="block text-sm font-medium mb-1">Imagen</label>
+        {{ form.image|add_class:"w-full text-gray-900 bg-gray-100 rounded-md" }}
+      </div>
+
+      <!-- Categorías -->
+      <div>
+        <label for="id_categories" class="block text-sm font-medium mb-1">Categorías</label>
+        <div class="mt-2 space-y-2">
+          {% for checkbox in form.categories %}
+            <div class="flex items-center space-x-2">
+              {{ checkbox.tag }}
+              <span>{{ checkbox.choice_label }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Disponible -->
+      <div>
+        <label for="id_available" class="block text-sm font-medium mb-1">Disponible</label>
+        {{ form.available }}
       </div>
     </div>
 
-    <!-- Botón de submit -->
+    <!-- Botón de acción -->
     <div class="mt-6 text-center">
       <button type="submit" class="w-full py-2 px-4 text-white bg-purple-600 hover:bg-purple-700 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
         {% if form.instance.pk %}Actualizar{% else %}Crear{% endif %}

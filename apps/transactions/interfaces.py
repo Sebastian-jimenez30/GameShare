@@ -1,11 +1,13 @@
 # apps/transactions/interfaces.py
 
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 from .models import (
-    Rental, Purchase, SharedRental, SharedRentalPayment,
+    Rental, Transaction, SharedRental, SharedRentalPayment,
     Cart, CartItem, Invoice, Payment
 )
+from apps.users.models import User
+from apps.games.models import Game
 
 
 class IRentalRepository(ABC):
@@ -14,11 +16,11 @@ class IRentalRepository(ABC):
         pass
 
     @abstractmethod
-    def get_rental_by_id(self, rental_id: int) -> Rental:
+    def get_rental_by_id(self, rental_id: int) -> Optional[Rental]:
         pass
 
     @abstractmethod
-    def update_rental(self, rental_id: int, rental_data: dict) -> Rental:
+    def update_rental(self, rental_id: int, rental_data: dict) -> Optional[Rental]:
         pass
 
     @abstractmethod
@@ -31,24 +33,9 @@ class IRentalRepository(ABC):
 
 
 class IPurchaseRepository(ABC):
-    @abstractmethod
-    def create_purchase(self, purchase_data: dict) -> Purchase:
-        pass
 
     @abstractmethod
-    def get_purchase_by_id(self, purchase_id: int) -> Purchase:
-        pass
-
-    @abstractmethod
-    def update_purchase(self, purchase_id: int, purchase_data: dict) -> Purchase:
-        pass
-
-    @abstractmethod
-    def delete_purchase(self, purchase_id: int) -> bool:
-        pass
-
-    @abstractmethod
-    def list_purchases(self) -> List[Purchase]:
+    def purchase_exists(self, user: User, game: Game) -> bool:
         pass
 
 
@@ -58,11 +45,11 @@ class ISharedRentalRepository(ABC):
         pass
 
     @abstractmethod
-    def get_shared_rental_by_id(self, shared_rental_id: int) -> SharedRental:
+    def get_shared_rental_by_id(self, shared_rental_id: int) -> Optional[SharedRental]:
         pass
 
     @abstractmethod
-    def update_shared_rental(self, shared_rental_id: int, data: dict) -> SharedRental:
+    def update_shared_rental(self, shared_rental_id: int, data: dict) -> Optional[SharedRental]:
         pass
 
     @abstractmethod
@@ -70,7 +57,7 @@ class ISharedRentalRepository(ABC):
         pass
 
     @abstractmethod
-    def list_shared_rentals(self) -> List[SharedRental]:
+    def list_shared_rentals(self, user: User) -> List[SharedRental]:
         pass
 
 
@@ -80,11 +67,11 @@ class ISharedRentalPaymentRepository(ABC):
         pass
 
     @abstractmethod
-    def get_shared_rental_payment_by_id(self, payment_id: int) -> SharedRentalPayment:
+    def get_shared_rental_payment_by_id(self, payment_id: int) -> Optional[SharedRentalPayment]:
         pass
 
     @abstractmethod
-    def update_shared_rental_payment(self, payment_id: int, data: dict) -> SharedRentalPayment:
+    def update_shared_rental_payment(self, payment_id: int, data: dict) -> Optional[SharedRentalPayment]:
         pass
 
     @abstractmethod
@@ -102,11 +89,15 @@ class ICartRepository(ABC):
         pass
 
     @abstractmethod
-    def get_cart_by_id(self, cart_id: int) -> Cart:
+    def get_cart_by_id(self, cart_id: int) -> Optional[Cart]:
         pass
 
     @abstractmethod
-    def update_cart(self, cart_id: int, cart_data: dict) -> Cart:
+    def get_cart_by_user(self, user: User) -> Optional[Cart]:
+        pass
+
+    @abstractmethod
+    def update_cart(self, cart_id: int, cart_data: dict) -> Optional[Cart]:
         pass
 
     @abstractmethod
@@ -124,11 +115,15 @@ class ICartItemRepository(ABC):
         pass
 
     @abstractmethod
-    def get_cart_item_by_id(self, item_id: int) -> CartItem:
+    def get_cart_item_by_id(self, item_id: int) -> Optional[CartItem]:
         pass
 
     @abstractmethod
-    def update_cart_item(self, item_id: int, cart_item_data: dict) -> CartItem:
+    def get_item_by_cart_and_game(self, cart: Cart, game: Game) -> Optional[CartItem]:
+        pass
+
+    @abstractmethod
+    def update_cart_item(self, item_id: int, cart_item_data: dict) -> Optional[CartItem]:
         pass
 
     @abstractmethod
@@ -146,11 +141,11 @@ class IInvoiceRepository(ABC):
         pass
 
     @abstractmethod
-    def get_invoice_by_id(self, invoice_id: int) -> Invoice:
+    def get_invoice_by_id(self, invoice_id: int) -> Optional[Invoice]:
         pass
 
     @abstractmethod
-    def update_invoice(self, invoice_id: int, invoice_data: dict) -> Invoice:
+    def update_invoice(self, invoice_id: int, invoice_data: dict) -> Optional[Invoice]:
         pass
 
     @abstractmethod
@@ -168,11 +163,11 @@ class IPaymentRepository(ABC):
         pass
 
     @abstractmethod
-    def get_payment_by_id(self, payment_id: int) -> Payment:
+    def get_payment_by_id(self, payment_id: int) -> Optional[Payment]:
         pass
 
     @abstractmethod
-    def update_payment(self, payment_id: int, payment_data: dict) -> Payment:
+    def update_payment(self, payment_id: int, payment_data: dict) -> Optional[Payment]:
         pass
 
     @abstractmethod
@@ -181,4 +176,25 @@ class IPaymentRepository(ABC):
 
     @abstractmethod
     def list_payments(self) -> List[Payment]:
+        pass
+
+class ITransactionRepository(ABC):
+    @abstractmethod
+    def create_transaction(self, transaction_data: dict) -> Transaction:
+        pass
+
+    @abstractmethod
+    def get_transaction_by_id(self, transaction_id: int) -> Transaction:
+        pass
+
+    @abstractmethod
+    def update_transaction(self, transaction_id: int, data: dict) -> Transaction:
+        pass
+
+    @abstractmethod
+    def delete_transaction(self, transaction_id: int) -> bool:
+        pass
+
+    @abstractmethod
+    def list_transactions(self) -> List[Transaction]:
         pass

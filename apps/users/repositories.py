@@ -1,9 +1,11 @@
-from .models import User, Customer, AdminProfile
-from .interfaces import IUserRepository, ICustomerRepository, IAdminRepository, IUserLibraryRepository, IUserSearchRepository
+from .models import User
+from .interfaces import IUserRepository, IUserLibraryRepository, IUserSearchRepository
 from django.contrib.auth import authenticate
 from apps.games.models import Game
-from apps.transactions.models import Purchase, Rental, SharedRental, SharedRentalPayment
+from apps.transactions.models import Transaction, Rental, SharedRental, SharedRentalPayment
 from django.db.models import Q
+from typing import List
+
 
 class UserRepository(IUserRepository):
     def create_user(self, user_data):
@@ -11,51 +13,48 @@ class UserRepository(IUserRepository):
             username=user_data['username'],
             email=user_data['email'],
             password=user_data['password'],
-            name=user_data['name'],
-            user_type=user_data.get('user_type', 'customer')
+            full_name=user_data.get('full_name', ''),
+            user_type=user_data.get('user_type', 'customer'),
+            processor=user_data.get('processor', ''),
+            ram_gb=user_data.get('ram_gb', 0),
+            graphics_card=user_data.get('graphics_card', '')
         )
 
     def get_user_by_id(self, user_id: int):
-        try:
-            return User.objects.get(id=user_id)
-        except User.DoesNotExist:
-            return None
-    
+        return User.objects.filter(id=user_id).first()
+
     def authenticate_user(self, username: str, password: str):
-        return authenticate(username=username, password=password)  
-
-        
-class CustomerRepository(ICustomerRepository):
-    def create_customer(self, user: User, customer_data: dict):
-        return Customer.objects.create(user=user, **customer_data)
-
-class AdminRepository(IAdminRepository):
-    def create_admin(self, user: User):
-        return AdminProfile.objects.create(user=user)
+        return authenticate(username=username, password=password)
     
+    def list_all_users(self) -> List[User]:
+        return self.user_repo.list_all_users()
+
+
+
 class UserLibraryRepository(IUserLibraryRepository):
     def get_purchased_games(self, user):
-        purchases = Purchase.objects.filter(user=user).select_related('game')
-        return [purchase.game for purchase in purchases]
+        purchases = Transaction.objects.filter(
+            user=user, transaction_type='purchase'
+        ).select_related('game')
+        return [t.game for t in purchases]
 
     def get_rented_games(self, user):
-        rentals = Rental.objects.filter(user=user).select_related('game')
-        return [rental.game for rental in rentals]
+        rentals = Transaction.objects.filter(
+            user=user, transaction_type='rental'
+        ).select_related('game')
+        return [t.game for t in rentals]
 
     def get_shared_rentals(self, user):
-
-        # Buscamos los pagos del usuario en rentas compartidas
         shared_payments = SharedRentalPayment.objects.filter(user=user).select_related('shared_rental__game')
-
+        
         available_shared_rentals = []
         unavailable_shared_rentals = []
 
         for payment in shared_payments:
             shared_rental = payment.shared_rental
-            payments = SharedRentalPayment.objects.filter(shared_rental=shared_rental)
+            payments = shared_rental.payments.all()
 
-            # Verificamos si todos los usuarios han completado el pago
-            all_paid = not payments.exclude(status='completed').exists()
+            all_paid = all(p.status == 'completed' for p in payments)
 
             if all_paid:
                 available_shared_rentals.append(shared_rental)
@@ -67,6 +66,9 @@ class UserLibraryRepository(IUserLibraryRepository):
             "unavailable": unavailable_shared_rentals
         }
 
+
 class UserSearchRepository(IUserSearchRepository):
     def search_users(self, query: str, exclude_user_id: int):
-        return User.objects.filter(username__icontains=query).exclude(id=exclude_user_id)[:10]
+        return User.objects.filter(
+            Q(username__icontains=query) | Q(full_name__icontains=query)
+        ).exclude(id=exclude_user_id)[:10]

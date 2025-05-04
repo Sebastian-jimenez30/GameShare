@@ -4,106 +4,136 @@ from apps.users.models import User
 from apps.games.models import Game
 
 
-class Rental(models.Model):
-    STATUS_CHOICES = [
-        ('active', 'Active'),
-        ('finished', 'Finished'),
+class Transaction(models.Model):
+    """
+    Transacción general: puede ser una compra, alquiler o alquiler compartido.
+    """
+    TRANSACTION_TYPE_CHOICES = [
+        ('purchase', 'Purchase'),
+        ('rental', 'Rental'),
+        ('shared_rental', 'Shared Rental'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    start_date = models.DateTimeField(auto_now_add=True)
-    end_date = models.DateTimeField()
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='transactions')
+    transaction_type = models.CharField(max_length=20, choices=TRANSACTION_TYPE_CHOICES)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
-
-    def __str__(self):
-        return f'Rental of {self.game} by {self.user.username}'
-
-
-class Purchase(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Purchase of {self.game} by {self.user.username}'
+        return f"{self.transaction_type.title()} of {self.game.title} by {self.user.username}"
+
+
+class Rental(models.Model):
+    """
+    Alquiler individual de un juego (por hora o día).
+    """
+    RENTAL_TYPE_CHOICES = [
+        ('hourly', 'Hourly'),
+        ('daily', 'Daily'),
+    ]
+    transaction = models.OneToOneField(Transaction, on_delete=models.CASCADE, related_name='rental_detail')
+    rental_type = models.CharField(max_length=10, choices=RENTAL_TYPE_CHOICES)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('finished', 'Finished')])
+
+    def __str__(self):
+        return f"{self.transaction.user.username} rented {self.transaction.game.title}"
 
 
 class SharedRental(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    users = models.ManyToManyField(User, through='SharedRentalPayment')
+    """
+    Alquiler grupal donde múltiples usuarios comparten la renta y el costo.
+    """
+    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='shared_rentals')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_shared_rentals')
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f'Shared rental: {self.game}'
+        return f"Shared rental of {self.game.title} by {self.created_by.username}"
 
+    @property
     def is_fully_paid(self):
-        return all(payment.status == 'completed' for payment in self.sharedrentalpayment_set.all())
-
-    def split_amount_per_user(self, total_amount):
-        user_count = self.sharedrentalpayment_set.count()
-        return total_amount / user_count if user_count else Decimal('0.00')
+        return all(payment.status == 'completed' for payment in self.payments.all())
 
 
 class SharedRentalPayment(models.Model):
+    """
+    Pagos individuales por parte de los usuarios en un alquiler compartido.
+    """
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('completed', 'Completed'),
     ]
-    shared_rental = models.ForeignKey(SharedRental, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    shared_rental = models.ForeignKey(SharedRental, on_delete=models.CASCADE, related_name='payments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shared_rental_payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
     payment_date = models.DateTimeField(null=True, blank=True)
 
+    class Meta:
+        unique_together = ('shared_rental', 'user')
+
     def __str__(self):
-        return f'{self.user.username} - {self.shared_rental.game} - {self.status}'
+        return f"{self.user.username} - {self.shared_rental.game.title} - {self.status}"
 
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    """
+    Carrito de un usuario, puede contener compras, alquileres o rentas compartidas.
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
 
     def __str__(self):
-        return f'Cart of {self.user.username}'
+        return f"Cart of {self.user.username}"
 
-    def update_total(self):
-        total = 0
-        for item in self.cartitem_set.all():
-            total += item.game.price * item.quantity
-        self.total = total
-        self.save()
+    def total_amount(self):
+        return sum(item.get_total_price() for item in self.items.all())
 
 
 class CartItem(models.Model):
-    RENT_TYPE_CHOICES = [
-        ('rent', 'Rent'),
+    """
+    Item en el carrito. Soporta compras, alquileres y alquileres compartidos.
+    """
+    ITEM_TYPE_CHOICES = [
         ('purchase', 'Purchase'),
-        ('shared', 'Shared'),
+        ('rental', 'Rental'),
+        ('shared', 'Shared Rental'),
+    ]
+    RENTAL_TYPE_CHOICES = [
+        ('hourly', 'Hourly'),
+        ('daily', 'Daily'),
     ]
 
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    item_type = models.CharField(max_length=10, choices=RENT_TYPE_CHOICES)
+    item_type = models.CharField(max_length=15, choices=ITEM_TYPE_CHOICES)
     quantity = models.PositiveIntegerField(default=1)
-    shared_users = models.ManyToManyField(User, related_name='shared_cart_items', blank=True)
+
+    # Para alquiler
+    rental_type = models.CharField(max_length=10, choices=RENTAL_TYPE_CHOICES, null=True, blank=True)
+
+    # Para renta compartida
+    shared_with = models.ManyToManyField(User, blank=True, related_name='shared_cart_items')
 
     def __str__(self):
-        return f"{self.item_type.title()} - {self.game.title} ({self.quantity})"
+        return f"{self.item_type.title()} - {self.game.title}"
 
-
-class Invoice(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    purchase_transaction = models.ForeignKey(Purchase, null=True, blank=True, on_delete=models.SET_NULL)
-    rental_transaction = models.ForeignKey(Rental, null=True, blank=True, on_delete=models.SET_NULL)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateTimeField(auto_now_add=True)
-    pdf_file = models.FileField(upload_to='invoices/')
-
-    def __str__(self):
-        return f'Invoice #{self.id} for {self.user.username}'
+    def get_total_price(self):
+        if self.item_type == 'purchase':
+            return self.game.purchase_price * self.quantity
+        elif self.item_type == 'rental':
+            return (self.game.rental_price_per_hour if self.rental_type == 'hourly' else self.game.rental_price_per_day) * self.quantity
+        return Decimal('0.00')  # Para shared, se calcula por separado
 
 
 class Payment(models.Model):
+    """
+    Pagos individuales del usuario.
+    """
     METHOD_CHOICES = [
         ('card', 'Card'),
         ('paypal', 'PayPal'),
@@ -113,11 +143,26 @@ class Payment(models.Model):
         ('pending', 'Pending'),
         ('completed', 'Completed'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     method = models.CharField(max_length=10, choices=METHOD_CHOICES)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Payment of {self.amount} by {self.user.username}'
+        return f"{self.user.username} paid {self.amount} ({self.method})"
+
+
+class Invoice(models.Model):
+    """
+    Factura generada a partir de una transacción.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invoices')
+    transaction = models.OneToOneField(Transaction, on_delete=models.CASCADE, related_name='invoice')
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    pdf_file = models.FileField(upload_to='invoices/')
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Invoice #{self.id} for {self.user.username}"

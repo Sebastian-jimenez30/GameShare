@@ -13,54 +13,69 @@
           {% for item in items %}
           <div class="rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-sm md:p-6">
             <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-              <!-- Reutilizando el componente GameCard -->
               {% include "components/game_card.html" with game=item.game game_url="#" actions="cart" item_id=item.id item_type=item.item_type %}
-              
-              <div class="flex items-center justify-between md:order-3 md:justify-end">
-                <div class="flex items-center">
-                  <form action="{% url 'update_cart_item_type' item.id %}" method="post" class="d-inline">
-                    {% csrf_token %}
-                    <select name="item_type" onchange="this.form.submit()" class="form-select form-select-sm text-gray-900 dark:text-white bg-gray-700 border border-gray-600 rounded-md px-3 py-2">
-                      <option value="rent" {% if item.item_type == 'rent' %}selected{% endif %}>Renta</option>
-                      <option value="purchase" {% if item.item_type == 'purchase' %}selected{% endif %}>Compra</option>
-                      <option value="shared" {% if item.item_type == 'shared' %}selected{% endif %}>Renta Compartida</option>
-                    </select>
-                  </form>
-                </div>
-                <div class="text-end md:order-4 md:w-32">
-                  <p class="text-base font-bold text-gray-200">${{ item.game.price }}</p>
-                </div>
-              </div>
 
-              <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
-                {% if item.item_type == 'shared' %}
-                  {% if item.shared_users.all %}
-                    <div class="mt-2 text-gray-300">
-                      <strong>Usuarios compartidos:</strong>
-                      <ul class="list-disc pl-5">
-                        {% for user in item.shared_users.all %}
-                          <li class="flex justify-between">{{ user.username }}
-                            <form method="post" action="{% url 'remove_shared_user' item.id user.id %}">
-                              {% csrf_token %}
-                              <button type="submit" class="text-red-500 hover:text-red-700">✕</button>
-                            </form>
-                          </li>
-                        {% endfor %}
-                      </ul>
-                    </div>
-                  {% endif %}
-                  <form method="post" action="{% url 'update_shared_users' item.id %}" class="mt-2">
-                    {% csrf_token %}
-                    <label class="text-gray-400">Añadir usuarios (usernames separados por coma):</label>
-                    <input type="text" name="usernames" class="w-full bg-gray-700 text-white rounded-md px-3 py-2 mt-2" placeholder="ej: juan,marco,luis">
-                    <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Guardar Usuarios</button>
-                  </form>
-                {% endif %}
-                <form method="post" action="{% url 'remove_from_cart' item.id %}" class="mt-2">
+              <!-- Selector tipo de ítem -->
+              <div class="flex items-center justify-between md:order-3 md:justify-end">
+                <form action="{% url 'update_cart_item_type' item.id %}" method="post">
                   {% csrf_token %}
-                  <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
+                  <select name="item_type" onchange="this.form.submit()" class="form-select text-gray-900 dark:text-white bg-gray-700 border border-gray-600 rounded-md px-3 py-2">
+                    <option value="rental" {% if item.item_type == 'rental' %}selected{% endif %}>Renta</option>
+                    <option value="purchase" {% if item.item_type == 'purchase' %}selected{% endif %}>Compra</option>
+                    <option value="shared" {% if item.item_type == 'shared' %}selected{% endif %}>Renta Compartida</option>
+                  </select>
                 </form>
               </div>
+
+              <!-- Precio total del ítem -->
+              <div class="text-end md:order-4 md:w-32">
+                <p class="text-base font-bold text-gray-200">${{ item.get_total_price }}</p>
+              </div>
+            </div>
+
+            <!-- Opciones adicionales por tipo -->
+            <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md mt-4">
+              {% if item.item_type == 'rental' %}
+                <form method="post" action="{% url 'update_cart_item_type' item.id %}">
+                  {% csrf_token %}
+                  <label class="text-gray-400 block mb-1">Tipo de Renta:</label>
+                  <select name="rental_type" class="form-select bg-gray-700 text-white px-3 py-2 rounded-md" onchange="this.form.submit()">
+                    <option value="hourly" {% if item.rental_type == 'hourly' %}selected{% endif %}>Por hora</option>
+                    <option value="daily" {% if item.rental_type == 'daily' %}selected{% endif %}>Por día</option>
+                  </select>
+                </form>
+              {% endif %}
+
+              {% if item.item_type == 'shared' %}
+                {% if item.shared_with.all %}
+                <div class="text-gray-300">
+                  <strong>Compartido con:</strong>
+                  <ul class="list-disc pl-5">
+                    {% for user in item.shared_with.all %}
+                    <li class="flex justify-between">
+                      {{ user.username }}
+                      <form method="post" action="{% url 'remove_shared_user' item.id user.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="text-red-500 hover:text-red-700 ml-2">✕</button>
+                      </form>
+                    </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'update_shared_users' item.id %}" class="mt-2">
+                  {% csrf_token %}
+                  <label class="text-gray-400">Añadir usuarios (usernames separados por coma):</label>
+                  <input type="text" name="usernames" class="w-full bg-gray-700 text-white rounded-md px-3 py-2 mt-2" placeholder="ej: juan,marco,luis">
+                  <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Guardar Usuarios</button>
+                </form>
+              {% endif %}
+
+              <form method="post" action="{% url 'remove_from_cart' item.id %}" class="mt-2">
+                {% csrf_token %}
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
+              </form>
             </div>
           </div>
           {% empty %}
@@ -76,7 +91,7 @@
           <div class="space-y-4">
             <dl class="flex items-center justify-between gap-4">
               <dt class="text-base font-normal text-gray-400">Total</dt>
-              <dd class="text-base font-bold text-gray-200">${{ cart.total }}</dd>
+              <dd class="text-base font-bold text-gray-200">${{ cart.total_amount }}</dd>
             </dl>
           </div>
           <form method="post" action="{% url 'checkout_cart' %}">

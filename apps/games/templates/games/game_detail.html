@@ -3,75 +3,106 @@
 {% block title %}Detalle del Juego{% endblock %}
 
 {% block content %}
-  <div class="container mx-auto p-6 bg-gray-900 text-gray-100">
-    <!-- Información del juego -->
-    <h2 class="text-4xl font-bold text-purple-400 mb-4">{{ game.title }}</h2>
-    <p class="text-lg text-gray-300"><strong class="text-purple-400">Desarrollador:</strong> {{ game.developer }}</p>
-    <p class="text-lg text-gray-300"><strong class="text-purple-400">Precio:</strong> ${{ game.price }}</p>
-    <p class="text-lg text-gray-300"><strong class="text-purple-400">Descripción:</strong> {{ game.description }}</p>
+<div class="container mx-auto p-6 bg-gray-900 text-gray-100 rounded-lg shadow-md">
+  <!-- Encabezado del juego -->
+  <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
+    <h2 class="text-4xl font-bold text-purple-400">{{ game.title }}</h2>
+    {% if game.image %}
+      <img src="{{ game.image.url }}" alt="Imagen del juego" class="w-40 h-40 object-cover rounded mt-4 md:mt-0 border-2 border-purple-600">
+    {% endif %}
+  </div>
+
+  <!-- Datos generales -->
+  <div class="grid md:grid-cols-2 gap-6">
+    <div>
+      <p class="text-lg"><strong class="text-purple-400">Desarrollador:</strong> {{ game.developer }}</p>
+      <p class="text-lg"><strong class="text-purple-400">Año de lanzamiento:</strong> {{ game.release_year }}</p>
+      <p class="text-lg"><strong class="text-purple-400">Precio de compra:</strong> ${{ game.purchase_price }}</p>
+      <p class="text-lg"><strong class="text-purple-400">Renta por hora:</strong> ${{ game.rental_price_per_hour }}</p>
+      <p class="text-lg"><strong class="text-purple-400">Renta por día:</strong> ${{ game.rental_price_per_day }}</p>
+      <p class="text-lg"><strong class="text-purple-400">Disponible:</strong> 
+        <span class="{% if game.available %}text-green-400{% else %}text-red-400{% endif %}">
+          {% if game.available %}Sí{% else %}No{% endif %}
+        </span>
+      </p>
+    </div>
 
     <!-- Categorías -->
-    <h3 class="text-2xl font-bold text-purple-400 mt-6 mb-4">Categorías</h3>
-    {% if categories %}
-      <ul class="list-disc list-inside">
-        {% for category in categories %}
-          <li class="text-lg text-gray-300">{{ category.category_name }}</li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p class="text-lg text-gray-300">Este juego no tiene categorías asociadas.</p>
-    {% endif %}
+    <div>
+      <h3 class="text-2xl font-bold text-purple-400 mb-2">Categorías</h3>
+      {% if categories %}
+        <ul class="list-disc list-inside space-y-1">
+          {% for category in categories %}
+            <li class="text-lg text-gray-300">{{ category.name }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-lg text-gray-400">Este juego no tiene categorías asignadas.</p>
+      {% endif %}
+    </div>
+  </div>
 
-    <!-- Reseñas existentes -->
-    <h3 class="text-2xl font-bold text-purple-400 mt-6 mb-4">Reseñas</h3>
+  <!-- Requisitos técnicos -->
+  <div class="grid md:grid-cols-2 gap-6 mt-8">
+    <div>
+      <h3 class="text-2xl font-bold text-purple-400 mb-3">Requisitos Mínimos</h3>
+      <ul class="space-y-1 text-gray-300">
+        <li><strong>Procesador:</strong> {{ game.requirements.min_processor }}</li>
+        <li><strong>RAM:</strong> {{ game.requirements.min_ram_gb }} GB</li>
+        <li><strong>Gráfica:</strong> {{ game.requirements.min_gpu }}</li>
+      </ul>
+    </div>
+
+    <div>
+      <h3 class="text-2xl font-bold text-purple-400 mb-3">Requisitos Recomendados</h3>
+      <ul class="space-y-1 text-gray-300">
+        <li><strong>Procesador:</strong> {{ game.requirements.rec_processor|default:"N/A" }}</li>
+        <li><strong>RAM:</strong> {{ game.requirements.rec_ram_gb|default:"N/A" }} GB</li>
+        <li><strong>Gráfica:</strong> {{ game.requirements.rec_gpu|default:"N/A" }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Reseñas -->
+  <div class="mt-12">
+    <h3 class="text-2xl font-bold text-purple-400 mb-4">Reseñas</h3>
     {% if reviews %}
       <ul class="space-y-4">
         {% for review in reviews %}
-          <li class="bg-gray-800 p-4 rounded-lg shadow-lg">
-            <strong class="text-purple-400">{{ review.user.username }}:</strong> 
-            <span class="text-yellow-400">{{ review.rating }}⭐</span>
-            <p class="text-gray-300 mt-2">{{ review.comment }}</p>
-            <small class="text-gray-500">Publicado el {{ review.date }}</small>
+          <li class="bg-gray-800 p-4 rounded-lg shadow">
+            <div class="flex items-center justify-between">
+              <strong class="text-purple-300">{{ review.user.username }}</strong>
+              <span class="text-yellow-400 text-lg">{{ review.rating }}⭐</span>
+            </div>
+            {% if review.comment %}
+              <p class="mt-2 text-gray-300">{{ review.comment }}</p>
+            {% endif %}
+            <p class="text-sm text-gray-500 mt-1">Publicado el {{ review.date|date:"d M Y" }}</p>
           </li>
         {% endfor %}
       </ul>
     {% else %}
-      <p class="text-lg text-gray-300">No hay reseñas para este juego.</p>
+      <p class="text-gray-400">Este juego aún no tiene reseñas.</p>
     {% endif %}
+  </div>
 
-    <!-- Formulario para dejar una reseña -->
-    <h4 class="text-2xl font-bold text-purple-400 mt-6 mb-4">Deja tu reseña</h4>
+  <!-- Formulario de reseña -->
+  <div class="mt-12">
+    <h4 class="text-2xl font-bold text-purple-400 mb-4">Deja tu reseña</h4>
     <form method="post" class="bg-gray-800 p-6 rounded-lg shadow-lg">
       {% csrf_token %}
-      <div class="space-y-6">
-        <!-- Campo de calificación -->
-        <div>
-          <label for="id_rating" class="block text-lg font-medium text-purple-400 mb-2">Calificación</label>
-          <select name="rating" id="id_rating" class="w-full p-2 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
-            <option value="1">1 ⭐</option>
-            <option value="2">2 ⭐⭐</option>
-            <option value="3">3 ⭐⭐⭐</option>
-            <option value="4">4 ⭐⭐⭐⭐</option>
-            <option value="5">5 ⭐⭐⭐⭐⭐</option>
-          </select>
-        </div>
-
-        <!-- Campo de comentario -->
-        <div>
-          <label for="id_comment" class="block text-lg font-medium text-purple-400 mb-2">Comentario</label>
-          <textarea name="comment" id="id_comment" rows="4" class="w-full p-2 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Escribe tu reseña aquí..."></textarea>
-        </div>
-
-        <!-- Botón de enviar -->
-        <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-          Enviar Reseña
-        </button>
-      </div>
+      {{ review_form.as_p }}
+      <button type="submit" class="w-full mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+        Enviar Reseña
+      </button>
     </form>
+  </div>
 
-    <!-- Botón para volver al catálogo -->
-    <a href="{% url 'catalog' %}" class="mt-6 inline-block bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+  <!-- Volver -->
+  <div class="mt-10">
+    <a href="{% url 'catalog' %}" class="inline-block bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
       Volver al Catálogo
     </a>
   </div>
+</div>
 {% endblock %}
