@@ -17,29 +17,20 @@
             <form action="{% url 'add_to_cart' %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="game_id" value="{{ game.id }}">
-                <input type="hidden" name="item_type" value="rent">
-                <button type="submit" class="w-full py-2 text-sm bg-blue-700 text-white font-medium rounded-md hover:bg-blue-800 transition">
-                    Rentar
+                <input type="hidden" name="item_type" value="purchase"> <!-- valor por defecto -->
+                <button type="submit" class="w-full py-2 text-sm bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition">
+                Agregar al carrito
                 </button>
             </form>
 
-            <form action="{% url 'add_to_cart' %}" method="post">
-                {% csrf_token %}
-                <input type="hidden" name="game_id" value="{{ game.id }}">
-                <input type="hidden" name="item_type" value="purchase">
-                <button type="submit" class="w-full py-2 text-sm bg-green-700 text-white font-medium rounded-md hover:bg-green-800 transition">
-                    Comprar
-                </button>
-            </form>
+            {% elif actions == "library" %}
+                <button class="mt-2 text-blue-400 hover:text-blue-300">Instalar</button>
 
-        {% elif actions == "library" %}
-            <button class="mt-2 text-blue-400 hover:text-blue-300">Instalar</button>
-
-        {% elif actions == "shared_available" %}
-            <button class="mt-2 text-blue-400 hover:text-blue-300">Descargar</button>
-            <a class="text-sm text-purple-400 hover:text-purple-300 mt-2" href="{% url 'shared_rental_details' pk=game.id %}">
-                Ver detalles
-            </a>
+            {% elif actions == "shared_available" %}
+                <button class="mt-2 text-blue-400 hover:text-blue-300">Descargar</button>
+                <a class="text-sm text-purple-400 hover:text-purple-300 mt-2" href="{% url 'shared_rental_details' pk=game.id %}">
+                    Ver detalles
+                </a>
 
         {% elif actions == "shared_unavailable" %}
             <p class="text-red-400">No disponible (pagos pendientes)</p>
