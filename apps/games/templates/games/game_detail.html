@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Detalle del Juego{% endblock %}
+{% block title %}{% trans "Detalle del Juego" %}{% endblock %}
 
 {% block content %}
   <div class="container mx-auto p-6 bg-gray-900 text-gray-100">
     <!-- Información del juego -->
     <h2 class="text-4xl font-bold text-purple-400 mb-4">{{ game.title }}</h2>
-    <p class="text-lg text-gray-300"><strong class="text-purple-400">Desarrollador:</strong> {{ game.developer }}</p>
-    <p class="text-lg text-gray-300"><strong class="text-purple-400">Precio:</strong> ${{ game.price }}</p>
-    <p class="text-lg text-gray-300"><strong class="text-purple-400">Descripción:</strong> {{ game.description }}</p>
+    <p class="text-lg text-gray-300"><strong class="text-purple-400">{% trans "Desarrollador:" %}</strong> {{ game.developer }}</p>
+    <p class="text-lg text-gray-300"><strong class="text-purple-400">{% trans "Precio:" %}</strong> ${{ game.price }}</p>
+    <p class="text-lg text-gray-300"><strong class="text-purple-400">{% trans "Descripción:" %}</strong> {{ game.description }}</p>
 
     <!-- Categorías -->
-    <h3 class="text-2xl font-bold text-purple-400 mt-6 mb-4">Categorías</h3>
+    <h3 class="text-2xl font-bold text-purple-400 mt-6 mb-4">{% trans "Categorías" %}</h3>
     {% if categories %}
       <ul class="list-disc list-inside">
         {% for category in categories %}
@@ -19,11 +19,11 @@
         {% endfor %}
       </ul>
     {% else %}
-      <p class="text-lg text-gray-300">Este juego no tiene categorías asociadas.</p>
+      <p class="text-lg text-gray-300">{% trans "Este juego no tiene categorías asociadas." %}</p>
     {% endif %}
 
     <!-- Reseñas existentes -->
-    <h3 class="text-2xl font-bold text-purple-400 mt-6 mb-4">Reseñas</h3>
+    <h3 class="text-2xl font-bold text-purple-400 mt-6 mb-4">{% trans "Reseñas" %}</h3>
     {% if reviews %}
       <ul class="space-y-4">
         {% for review in reviews %}
@@ -31,22 +31,22 @@
             <strong class="text-purple-400">{{ review.user.username }}:</strong> 
             <span class="text-yellow-400">{{ review.rating }}⭐</span>
             <p class="text-gray-300 mt-2">{{ review.comment }}</p>
-            <small class="text-gray-500">Publicado el {{ review.date }}</small>
+            <small class="text-gray-500">{% trans "Publicado el" %} {{ review.date }}</small>
           </li>
         {% endfor %}
       </ul>
     {% else %}
-      <p class="text-lg text-gray-300">No hay reseñas para este juego.</p>
+      <p class="text-lg text-gray-300">{% trans "No hay reseñas para este juego." %}</p>
     {% endif %}
 
     <!-- Formulario para dejar una reseña -->
-    <h4 class="text-2xl font-bold text-purple-400 mt-6 mb-4">Deja tu reseña</h4>
+    <h4 class="text-2xl font-bold text-purple-400 mt-6 mb-4">{% trans "Deja tu reseña" %}</h4>
     <form method="post" class="bg-gray-800 p-6 rounded-lg shadow-lg">
       {% csrf_token %}
       <div class="space-y-6">
         <!-- Campo de calificación -->
         <div>
-          <label for="id_rating" class="block text-lg font-medium text-purple-400 mb-2">Calificación</label>
+          <label for="id_rating" class="block text-lg font-medium text-purple-400 mb-2">{% trans "Calificación" %}</label>
           <select name="rating" id="id_rating" class="w-full p-2 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
             <option value="1">1 ⭐</option>
             <option value="2">2 ⭐⭐</option>
@@ -58,20 +58,20 @@
 
         <!-- Campo de comentario -->
         <div>
-          <label for="id_comment" class="block text-lg font-medium text-purple-400 mb-2">Comentario</label>
-          <textarea name="comment" id="id_comment" rows="4" class="w-full p-2 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="Escribe tu reseña aquí..."></textarea>
+          <label for="id_comment" class="block text-lg font-medium text-purple-400 mb-2">{% trans "Comentario" %}</label>
+          <textarea name="comment" id="id_comment" rows="4" class="w-full p-2 bg-gray-700 text-gray-100 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none" placeholder="{% trans 'Escribe tu reseña aquí...' %}"></textarea>
         </div>
 
         <!-- Botón de enviar -->
         <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-          Enviar Reseña
+          {% trans "Enviar Reseña" %}
         </button>
       </div>
     </form>
 
     <!-- Botón para volver al catálogo -->
     <a href="{% url 'catalog' %}" class="mt-6 inline-block bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-      Volver al Catálogo
+      {% trans "Volver al Catálogo" %}
     </a>
   </div>
 {% endblock %}

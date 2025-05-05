@@ -4,42 +4,42 @@
 {% block content %}
 <div class="bg-gray-900 py-12">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
-    <h2 class="text-4xl font-bold tracking-tight text-gray-200 mb-8">Mi Biblioteca</h2>
+    <h2 class="text-4xl font-bold tracking-tight text-gray-200 mb-8">{% trans "Mi Biblioteca" %}</h2>
 
     <div class="flex space-x-6 text-gray-400 mb-8 border-b border-gray-700 pb-4">
-      <button class="category-btn border-b-2 border-blue-500 pb-2 text-white" data-filter="all">Todos</button>
-      <button class="category-btn hover:text-gray-300" data-filter="comprados">Comprados</button>
-      <button class="category-btn hover:text-gray-300" data-filter="rentados">Rentados</button>
-      <button class="category-btn hover:text-gray-300" data-filter="rentados_compartidos">Rentados Compartidos</button>
+      <button class="category-btn border-b-2 border-blue-500 pb-2 text-white" data-filter="all">{% trans "Todos" %}</button>
+      <button class="category-btn hover:text-gray-300" data-filter="comprados">{% trans "Comprados" %}</button>
+      <button class="category-btn hover:text-gray-300" data-filter="rentados">{% trans "Rentados" %}</button>
+      <button class="category-btn hover:text-gray-300" data-filter="rentados_compartidos">{% trans "Rentados Compartidos" %}</button>
     </div>
 
     <!-- Juegos Comprados -->
     <div class="category-section" data-category="comprados">
-      <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">Juegos Comprados</h3>
+      <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">{% trans "Juegos Comprados" %}</h3>
       <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
         {% for game in purchased_games %}
           {% include "components/game_card.html" with game=game game_url="#" actions="library" %}
         {% empty %}
-          <p class="text-center text-gray-400 text-lg">No has comprado juegos aún.</p>
+          <p class="text-center text-gray-400 text-lg">{% trans "No has comprado juegos aún." %}</p>
         {% endfor %}
       </div>
     </div>
 
     <!-- Juegos Rentados -->
     <div class="category-section hidden" data-category="rentados">
-      <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">Juegos Rentados</h3>
+      <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">{% trans "Juegos Rentados" %}</h3>
       <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
         {% for game in rented_games %}
           {% include "components/game_card.html" with game=game game_url="#" actions="library" %}
         {% empty %}
-          <p class="text-center text-gray-400 text-lg">No has rentado juegos aún.</p>
+          <p class="text-center text-gray-400 text-lg">{% trans "No has rentado juegos aún." %}</p>
         {% endfor %}
       </div>
     </div>
 
     <!-- Juegos Rentados Compartidos -->
     <div class="category-section hidden" data-category="rentados_compartidos">
-      <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">Juegos Rentados Compartidos</h3>
+      <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">{% trans "Juegos Rentados Compartidos" %}</h3>
       <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
         {% for shared_rental in available_shared_rentals %}
           {% include "components/game_card.html" with game=shared_rental.game game_url="#" actions="shared_available" %}
@@ -50,7 +50,7 @@
         {% endfor %}
 
         {% if available_shared_rentals|length == 0 and unavailable_shared_rentals|length == 0 %}
-          <p class="text-center text-gray-400 text-lg">No tienes juegos rentados compartidos aún.</p>
+          <p class="text-center text-gray-400 text-lg">{% trans "No tienes juegos rentados compartidos aún." %}</p>
         {% endif %}
       </div>
     </div>

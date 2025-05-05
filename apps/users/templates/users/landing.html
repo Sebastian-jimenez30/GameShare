@@ -1,47 +1,52 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 
-{% block title %}GameRent - Plataforma de E-commerce de Videojuegos{% endblock %}
+{% block title %}
+    {% trans "GameRent - Plataforma de E-commerce de Videojuegos" %}
+{% endblock %}
 
 {% block content %}
-<!-- Asegurarse de que el fondo ocupe toda la pantalla -->
 <div class="bg-gray-900 h-screen flex flex-col justify-center items-center px-6 py-12 lg:px-8 w-full">
     <div class="text-center w-full">
+
         <!-- Título Principal -->
         <h1 class="mt-6 text-4xl font-extrabold text-white sm:text-5xl">
-            ¡Listo para JUGAR!
+            {% trans "¡Listo para JUGAR!" %}
         </h1>
+
         <p class="mt-4 text-lg text-gray-300">
-            Únete a nosotros y vive la experiencia de los videojuegos como nunca antes. Alquila o compra tus juegos favoritos de manera flexible y disfruta sin límites con tus amigos.
+            {% trans "Únete a nosotros y vive la experiencia de los videojuegos como nunca antes. Alquila o compra tus juegos favoritos de manera flexible y disfruta sin límites con tus amigos." %}
         </p>
-        
+
         <!-- Botón de acción centrado -->
         <div class="mt-8">
             <a href="{% url 'user_login_form' %}" class="inline-block px-6 py-3 text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500">
-                Comienza Ahora
+                {% trans "Comienza Ahora" %}
             </a>
         </div>
     </div>
 
     <!-- Sección de características -->
     <div class="mt-16 grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3 w-full">
+
         <!-- Característica 1 -->
         <div class="flex flex-col items-center text-center w-full">
-            <h3 class="mt-6 text-xl font-semibold text-white">Alquiler Flexible</h3>
-            <p class="mt-2 text-gray-400">Alquila juegos por horas o días y disfrútalos cuando quieras.</p>
+            <h3 class="mt-6 text-xl font-semibold text-white">{% trans "Alquiler Flexible" %}</h3>
+            <p class="mt-2 text-gray-400">{% trans "Alquila juegos por horas o días y disfrútalos cuando quieras." %}</p>
         </div>
 
         <!-- Característica 2 -->
         <div class="flex flex-col items-center text-center w-full">
-            <h3 class="mt-6 text-xl font-semibold text-white">Alquiler Compartido</h3>
-            <p class="mt-2 text-gray-400">Comparte juegos con tus amigos y divide el costo fácilmente.</p>
+            <h3 class="mt-6 text-xl font-semibold text-white">{% trans "Alquiler Compartido" %}</h3>
+            <p class="mt-2 text-gray-400">{% trans "Comparte juegos con tus amigos y divide el costo fácilmente." %}</p>
         </div>
 
         <!-- Característica 3 -->
         <div class="flex flex-col items-center text-center w-full">
-            <h3 class="mt-6 text-xl font-semibold text-white">Recomendaciones Personalizadas</h3>
-            <p class="mt-2 text-gray-400">Recibe sugerencias de juegos basadas en el hardware y tus preferencias.</p>
+            <h3 class="mt-6 text-xl font-semibold text-white">{% trans "Recomendaciones Personalizadas" %}</h3>
+            <p class="mt-2 text-gray-400">{% trans "Recibe sugerencias de juegos basadas en el hardware y tus preferencias." %}</p>
         </div>
+
     </div>
 </div>
 {% endblock %}

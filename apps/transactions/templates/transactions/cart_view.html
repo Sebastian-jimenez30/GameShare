@@ -4,7 +4,7 @@
 {% block content %}
 <section class="bg-gray-900 py-12 antialiased md:py-16">
   <div class="mx-auto max-w-screen-xl px-6 2xl:px-0">
-    <h2 class="text-3xl font-bold tracking-tight text-gray-200 sm:text-4xl">Mi Carrito</h2>
+    <h2 class="text-3xl font-bold tracking-tight text-gray-200 sm:text-4xl">{% trans "Mi Carrito" %}</h2>
 
     <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
       <!-- Lista de juegos en el carrito -->
@@ -21,9 +21,9 @@
                   <form action="{% url 'update_cart_item_type' item.id %}" method="post" class="d-inline">
                     {% csrf_token %}
                     <select name="item_type" onchange="this.form.submit()" class="form-select form-select-sm text-gray-900 dark:text-white bg-gray-700 border border-gray-600 rounded-md px-3 py-2">
-                      <option value="rent" {% if item.item_type == 'rent' %}selected{% endif %}>Renta</option>
-                      <option value="purchase" {% if item.item_type == 'purchase' %}selected{% endif %}>Compra</option>
-                      <option value="shared" {% if item.item_type == 'shared' %}selected{% endif %}>Renta Compartida</option>
+                      <option value="rent" {% if item.item_type == 'rent' %}selected{% endif %}>{% trans "Renta" %}</option>
+                      <option value="purchase" {% if item.item_type == 'purchase' %}selected{% endif %}>{% trans "Compra" %}</option>
+                      <option value="shared" {% if item.item_type == 'shared' %}selected{% endif %}>{% trans "Renta Compartida" %}</option>
                     </select>
                   </form>
                 </div>
@@ -36,7 +36,7 @@
                 {% if item.item_type == 'shared' %}
                   {% if item.shared_users.all %}
                     <div class="mt-2 text-gray-300">
-                      <strong>Usuarios compartidos:</strong>
+                      <strong>{% trans "Usuarios compartidos:" %}</strong>
                       <ul class="list-disc pl-5">
                         {% for user in item.shared_users.all %}
                           <li class="flex justify-between">{{ user.username }}
@@ -51,20 +51,20 @@
                   {% endif %}
                   <form method="post" action="{% url 'update_shared_users' item.id %}" class="mt-2">
                     {% csrf_token %}
-                    <label class="text-gray-400">Añadir usuarios (usernames separados por coma):</label>
-                    <input type="text" name="usernames" class="w-full bg-gray-700 text-white rounded-md px-3 py-2 mt-2" placeholder="ej: juan,marco,luis">
-                    <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Guardar Usuarios</button>
+                    <label class="text-gray-400">{% trans "Añadir usuarios (usernames separados por coma):" %}</label>
+                    <input type="text" name="usernames" class="w-full bg-gray-700 text-white rounded-md px-3 py-2 mt-2" placeholder="{% trans 'ej: juan,marco,luis' %}">
+                    <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">{% trans "Guardar Usuarios" %}</button>
                   </form>
                 {% endif %}
                 <form method="post" action="{% url 'remove_from_cart' item.id %}" class="mt-2">
                   {% csrf_token %}
-                  <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
+                  <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">{% trans "Eliminar" %}</button>
                 </form>
               </div>
             </div>
           </div>
           {% empty %}
-          <p class="text-center text-gray-400 text-lg">Tu carrito está vacío.</p>
+          <p class="text-center text-gray-400 text-lg">{% trans "Tu carrito está vacío." %}</p>
           {% endfor %}
         </div>
       </div>
@@ -72,16 +72,16 @@
       <!-- Resumen del pedido -->
       <div class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
         <div class="space-y-4 rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-sm sm:p-6">
-          <p class="text-xl font-semibold text-gray-200">Resumen del Pedido</p>
+          <p class="text-xl font-semibold text-gray-200">{% trans "Resumen del Pedido" %}</p>
           <div class="space-y-4">
             <dl class="flex items-center justify-between gap-4">
-              <dt class="text-base font-normal text-gray-400">Total</dt>
+              <dt class="text-base font-normal text-gray-400">{% trans "Total" %}</dt>
               <dd class="text-base font-bold text-gray-200">${{ cart.total }}</dd>
             </dl>
           </div>
           <form method="post" action="{% url 'checkout_cart' %}">
             {% csrf_token %}
-            <button type="submit" class="w-full px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700">Finalizar Compra</button>
+            <button type="submit" class="w-full px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700">{% trans "Finalizar Compra" %}</button>
           </form>
         </div>
       </div>

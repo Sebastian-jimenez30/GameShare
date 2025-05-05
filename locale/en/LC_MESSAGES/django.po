@@ -1,0 +1,472 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-05-05 10:45-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: .\apps\games\templates\games\catalog.html:8
+msgid "Catálogo de Juegos"
+msgstr ""
+
+#: .\apps\games\templates\games\catalog.html:15
+msgid "Agregar Juego"
+msgstr "Add Game"
+
+#: .\apps\games\templates\games\catalog.html:39
+#: .\templates\components\game_card.html:7
+msgid "Sin imagen"
+msgstr "No Image"
+
+#: .\apps\games\templates\games\catalog.html:53
+#: .\templates\components\game_card.html:22
+msgid "Rentar"
+msgstr "Rent"
+
+#: .\apps\games\templates\games\catalog.html:63
+#: .\templates\components\game_card.html:31
+msgid "Comprar"
+msgstr "Buy"
+
+#: .\apps\games\templates\games\catalog.html:73
+#: .\apps\transactions\templates\transactions\cart_view.html:26
+msgid "Renta Compartida"
+msgstr "Shared Rent"
+
+#: .\apps\games\templates\games\catalog.html:82
+#: .\apps\games\templates\games\game_form.html:8
+msgid "Editar"
+msgstr "Edit"
+
+#: .\apps\games\templates\games\catalog.html:89
+#: .\apps\games\templates\games\game_confirm_delete.html:10
+#: .\apps\transactions\templates\transactions\cart_view.html:61
+msgid "Eliminar"
+msgstr "Delete"
+
+#: .\apps\games\templates\games\catalog.html:97
+msgid "No hay juegos disponibles."
+msgstr "There isnt games avalaibles"
+
+#: .\apps\games\templates\games\game_confirm_delete.html:3
+msgid "Confirmar Eliminación"
+msgstr ""
+
+#: .\apps\games\templates\games\game_confirm_delete.html:6
+msgid "¿Estás seguro de que deseas eliminar el juego"
+msgstr ""
+
+#: .\apps\games\templates\games\game_confirm_delete.html:11
+msgid "Cancelar"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:3
+msgid "Detalle del Juego"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:9
+msgid "Desarrollador:"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:10
+msgid "Precio:"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:11
+msgid "Descripción:"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:14
+#: .\apps\games\templates\games\game_form.html:46
+msgid "Categorías"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:22
+msgid "Este juego no tiene categorías asociadas."
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:26
+msgid "Reseñas"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:34
+msgid "Publicado el"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:39
+msgid "No hay reseñas para este juego."
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:43
+msgid "Deja tu reseña"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:49
+msgid "Calificación"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:61
+msgid "Comentario"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:62
+msgid "Escribe tu reseña aquí..."
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:67
+msgid "Enviar Reseña"
+msgstr ""
+
+#: .\apps\games\templates\games\game_detail.html:74
+msgid "Volver al Catálogo"
+msgstr ""
+
+#: .\apps\games\templates\games\game_form.html:3
+msgid "Crear/Editar Juego"
+msgstr ""
+
+#: .\apps\games\templates\games\game_form.html:8
+#: .\apps\games\templates\games\game_form.html:60
+msgid "Crear"
+msgstr ""
+
+#: .\apps\games\templates\games\game_form.html:8
+msgid "Juego"
+msgstr ""
+
+#: .\apps\games\templates\games\game_form.html:16
+msgid "Título"
+msgstr ""
+
+#: .\apps\games\templates\games\game_form.html:22
+msgid "Desarrollador"
+msgstr ""
+
+#: .\apps\games\templates\games\game_form.html:28
+msgid "Año"
+msgstr ""
+
+#: .\apps\games\templates\games\game_form.html:34
+msgid "Precio"
+msgstr ""
+
+#: .\apps\games\templates\games\game_form.html:40
+msgid "Imagen"
+msgstr ""
+
+#: .\apps\games\templates\games\game_form.html:60
+msgid "Actualizar"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:7
+msgid "Mi Carrito"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:24
+msgid "Renta"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:25
+msgid "Compra"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:39
+msgid "Usuarios compartidos:"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:54
+msgid "Añadir usuarios (usernames separados por coma):"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:55
+msgid "ej: juan,marco,luis"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:56
+msgid "Guardar Usuarios"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:67
+msgid "Tu carrito está vacío."
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:75
+msgid "Resumen del Pedido"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:78
+msgid "Total"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:84
+msgid "Finalizar Compra"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:7
+msgid "Detalles de Renta Compartida"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:12
+msgid "Usuarios que han pagado"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:17
+msgid "Pagado"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:20
+msgid "No hay usuarios que hayan pagado aún."
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:27
+msgid "Usuarios pendientes de pago"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:32
+msgid "Pendiente"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:35
+msgid "No hay usuarios pendientes de pago."
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:42
+msgid "Estado de tu pago"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:44
+msgid "Has completado el pago. Puedes descargar el juego."
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:46
+msgid "Tu pago está pendiente. Completa el pago para obtener acceso."
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:51
+msgid "Completar Pago"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:61
+msgid "Volver a la Biblioteca"
+msgstr ""
+
+#: .\apps\users\templates\users\landing.html:5
+msgid "GameRent - Plataforma de E-commerce de Videojuegos"
+msgstr ""
+
+#: .\apps\users\templates\users\landing.html:14
+msgid "¡Listo para JUGAR!"
+msgstr ""
+
+#: .\apps\users\templates\users\landing.html:18
+msgid ""
+"Únete a nosotros y vive la experiencia de los videojuegos como nunca antes. "
+"Alquila o compra tus juegos favoritos de manera flexible y disfruta sin "
+"límites con tus amigos."
+msgstr ""
+
+#: .\apps\users\templates\users\landing.html:24
+msgid "Comienza Ahora"
+msgstr ""
+
+#: .\apps\users\templates\users\landing.html:34
+msgid "Alquiler Flexible"
+msgstr ""
+
+#: .\apps\users\templates\users\landing.html:35
+msgid "Alquila juegos por horas o días y disfrútalos cuando quieras."
+msgstr ""
+
+#: .\apps\users\templates\users\landing.html:40
+msgid "Alquiler Compartido"
+msgstr ""
+
+#: .\apps\users\templates\users\landing.html:41
+msgid "Comparte juegos con tus amigos y divide el costo fácilmente."
+msgstr ""
+
+#: .\apps\users\templates\users\landing.html:46
+msgid "Recomendaciones Personalizadas"
+msgstr ""
+
+#: .\apps\users\templates\users\landing.html:47
+msgid "Recibe sugerencias de juegos basadas en el hardware y tus preferencias."
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:7
+msgid "Mi Biblioteca"
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:10
+msgid "Todos"
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:11
+msgid "Comprados"
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:12
+msgid "Rentados"
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:13
+msgid "Rentados Compartidos"
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:18
+msgid "Juegos Comprados"
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:23
+msgid "No has comprado juegos aún."
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:30
+msgid "Juegos Rentados"
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:35
+msgid "No has rentado juegos aún."
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:42
+msgid "Juegos Rentados Compartidos"
+msgstr ""
+
+#: .\apps\users\templates\users\library.html:53
+msgid "No tienes juegos rentados compartidos aún."
+msgstr ""
+
+#: .\apps\users\templates\users\login.html:4
+#: .\apps\users\templates\users\login.html:10
+msgid "Iniciar Sesión"
+msgstr "Log in"
+
+#: .\apps\users\templates\users\login.html:19
+#: .\apps\users\templates\users\register_form.html:26
+msgid "Usuario"
+msgstr ""
+
+#: .\apps\users\templates\users\login.html:27
+#: .\apps\users\templates\users\register_form.html:44
+msgid "Contraseña"
+msgstr ""
+
+#: .\apps\users\templates\users\login.html:45
+msgid "Ingresar"
+msgstr ""
+
+#: .\apps\users\templates\users\login.html:51
+msgid "¿No tienes cuenta?"
+msgstr ""
+
+#: .\apps\users\templates\users\login.html:53
+msgid "Regístrate aquí"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:4
+#: .\apps\users\templates\users\register_form.html:11
+msgid "Registro de Usuario"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:22
+msgid "Datos de Usuario"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:32
+msgid "Email"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:38
+msgid "Nombre"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:53
+msgid "Datos de Hardware"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:57
+msgid "Procesador"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:63
+msgid "RAM (GB)"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:69
+msgid "Tarjeta Gráfica"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:87
+msgid "Registrarse"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:93
+msgid "¿Ya tienes una cuenta?"
+msgstr ""
+
+#: .\apps\users\templates\users\register_form.html:95
+msgid "Inicia sesión aquí"
+msgstr ""
+
+#: .\templates\base.html:21
+msgid "GameShare"
+msgstr ""
+
+#: .\templates\base.html:28
+#, python-format
+msgid "Hola, <strong>%(user.username)s</strong>"
+msgstr ""
+
+#: .\templates\base.html:33
+msgid "Cerrar Sesión"
+msgstr ""
+
+#: .\templates\base.html:38
+msgid "Iniciar sesión"
+msgstr ""
+
+#: .\templates\base.html:42
+msgid "Abrir menú"
+msgstr ""
+
+#: .\templates\base.html:55
+msgid "Catálogo"
+msgstr ""
+
+#: .\templates\base.html:60
+msgid "Biblioteca"
+msgstr ""
+
+#: .\templates\base.html:65
+msgid "Carrito"
+msgstr ""
+
+#: .\templates\components\game_card.html:36
+msgid "Instalar"
+msgstr ""
+
+#: .\templates\components\game_card.html:39
+msgid "Descargar"
+msgstr ""
+
+#: .\templates\components\game_card.html:41
+#: .\templates\components\game_card.html:47
+msgid "Ver detalles"
+msgstr ""
+
+#: .\templates\components\game_card.html:45
+msgid "No disponible (pagos pendientes)"
+msgstr ""

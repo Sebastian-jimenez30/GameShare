@@ -1,15 +1,19 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static i18n %}
 
 {% block content %}
 <div class="bg-gray-900 py-12">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
-    <h2 class="text-3xl font-bold tracking-tight text-gray-200 text-center mb-6">Catálogo de Juegos</h2>
+    <h2 class="text-3xl font-bold tracking-tight text-gray-200 text-center mb-6">
+      {% trans "Catálogo de Juegos" %}
+    </h2>
 
     <!-- Verificación si el usuario es admin y mostrar los botones CRUD -->
     {% if user.is_superuser %}
       <div class="text-right mb-6">
-        <a href="{% url 'game_create' %}" class="text-white bg-purple-600 hover:bg-purple-700 py-2 px-6 rounded-md text-sm">Agregar Juego</a>
+        <a href="{% url 'game_create' %}" class="text-white bg-purple-600 hover:bg-purple-700 py-2 px-6 rounded-md text-sm">
+          {% trans "Agregar Juego" %}
+        </a>
       </div>
     {% endif %}
 
@@ -32,7 +36,7 @@
                 <img src="{{ game.image.url }}" alt="{{ game.title }}" class="w-full h-48 object-cover rounded-md mb-3">
               {% else %}
                 <div class="w-full h-48 bg-gray-700 rounded-md flex items-center justify-center">
-                  <span class="text-gray-400">Sin imagen</span>
+                  <span class="text-gray-400">{% trans "Sin imagen" %}</span>
                 </div>
               {% endif %}
               <h3 class="text-lg font-semibold text-gray-200">{{ game.title }}</h3>
@@ -46,7 +50,7 @@
                 <input type="hidden" name="game_id" value="{{ game.id }}">
                 <input type="hidden" name="item_type" value="rent">
                 <button type="submit" class="w-full py-2 text-sm bg-purple-600 text-white font-medium rounded-md hover:bg-purple-700 transition">
-                  Rentar
+                  {% trans "Rentar" %}
                 </button>
               </form>
 
@@ -56,7 +60,7 @@
                 <input type="hidden" name="game_id" value="{{ game.id }}">
                 <input type="hidden" name="item_type" value="purchase">
                 <button type="submit" class="w-full py-2 text-sm bg-gray-700 text-white font-medium rounded-md hover:bg-gray-800 transition">
-                  Comprar
+                  {% trans "Comprar" %}
                 </button>
               </form>
 
@@ -66,7 +70,7 @@
                 <input type="hidden" name="game_id" value="{{ game.id }}">
                 <input type="hidden" name="item_type" value="shared">
                 <button type="submit" class="w-full py-2 text-sm bg-blue-700 text-white font-medium rounded-md hover:bg-blue-800 transition">
-                  Renta Compartida
+                  {% trans "Renta Compartida" %}
                 </button>
               </form>
 
@@ -75,14 +79,14 @@
                 <div class="mt-4 flex justify-between space-x-2">
                   <!-- Editar Juego -->
                   <a href="{% url 'game_edit' game.id %}" class="w-1/2 py-2 text-sm bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 transition">
-                    Editar
+                    {% trans "Editar" %}
                   </a>
 
                   <!-- Eliminar Juego -->
                   <form action="{% url 'game_delete' game.id %}" method="post" style="display:inline;" class="w-1/2">
                     {% csrf_token %}
                     <button type="submit" class="py-2 text-sm bg-red-600 text-white font-medium rounded-md hover:bg-red-700 transition">
-                      Eliminar
+                      {% trans "Eliminar" %}
                     </button>
                   </form>
                 </div>
@@ -90,7 +94,7 @@
             </div>
           </div>
         {% empty %}
-          <p class="text-center text-gray-400 text-lg">No hay juegos disponibles.</p>
+          <p class="text-center text-gray-400 text-lg">{% trans "No hay juegos disponibles." %}</p>
         {% endfor %}
       </div>
     </div>
