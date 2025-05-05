@@ -6,6 +6,7 @@ from drf_yasg import openapi
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls.i18n import i18n_patterns
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -21,10 +22,16 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    # Ruta para cambiar el idioma con POST (opcional si usas select de idiomas)
+    path('i18n/', include('django.conf.urls.i18n')),
+]
+
+urlpatterns += i18n_patterns(
     path('admin/', admin.site.urls),
     path('', include('apps.users.urls')),
     path('games/', include('apps.games.urls')),
     path('transactions/', include('apps.transactions.urls')),
     path('logout/', auth_views.LogoutView.as_view(next_page='user_login_form'), name='logout'),
+)
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

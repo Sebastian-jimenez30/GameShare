@@ -4,7 +4,7 @@
 {% block content %}
 <section class="bg-gray-900 py-12 antialiased md:py-16">
   <div class="mx-auto max-w-screen-xl px-6 2xl:px-0">
-    <h2 class="text-3xl font-bold tracking-tight text-gray-200 sm:text-4xl">Mi Carrito</h2>
+    <h2 class="text-3xl font-bold tracking-tight text-gray-200 sm:text-4xl">{% trans "Mi Carrito" %}</h2>
 
     <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
       <!-- Lista de juegos en el carrito -->
@@ -91,7 +91,7 @@
             </div>
           </div>
           {% empty %}
-          <p class="text-center text-gray-400 text-lg">Tu carrito está vacío.</p>
+          <p class="text-center text-gray-400 text-lg">{% trans "Tu carrito está vacío." %}</p>
           {% endfor %}
         </div>
       </div>
@@ -99,7 +99,7 @@
       <!-- Resumen del pedido -->
       <div class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
         <div class="space-y-4 rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-sm sm:p-6">
-          <p class="text-xl font-semibold text-gray-200">Resumen del Pedido</p>
+          <p class="text-xl font-semibold text-gray-200">{% trans "Resumen del Pedido" %}</p>
           <div class="space-y-4">
             <dl class="flex items-center justify-between gap-4">
               <dt class="text-base font-normal text-gray-400">Total</dt>
@@ -108,7 +108,7 @@
           </div>
           <form method="post" action="{% url 'checkout_cart' %}">
             {% csrf_token %}
-            <button type="submit" class="w-full px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700">Finalizar Compra</button>
+            <button type="submit" class="w-full px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700">{% trans "Finalizar Compra" %}</button>
           </form>
         </div>
       </div>
