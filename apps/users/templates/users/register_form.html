@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load i18n %}
 {% block title %}{% trans "Registro de Usuario" %}{% endblock %}
 
 {% block content %}
@@ -35,13 +35,8 @@
                         </div>
 
                         <div>
-<<<<<<< HEAD
-                            <label for="full_name" class="block text-sm font-medium text-gray-300">Nombre completo</label>
-                            <input type="text" name="full_name" id="full_name" required autocomplete="name"
-=======
                             <label for="name" class="block text-sm font-medium text-gray-300">{% trans "Nombre" %}</label>
                             <input type="text" name="name" id="name" required
->>>>>>> origin/main
                                    class="block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         </div>                        
 

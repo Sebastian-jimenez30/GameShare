@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-05 10:45-0500\n"
+"POT-Creation-Date: 2025-05-05 17:35-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
 #: .\apps\games\templates\games\catalog.html:8
 msgid "Catálogo de Juegos"
 msgstr ""
 
-#: .\apps\games\templates\games\catalog.html:15
+#: .\apps\games\templates\games\catalog.html:14
 msgid "Agregar Juego"
 msgstr "Add Game"
 
@@ -30,33 +31,13 @@ msgstr "Add Game"
 msgid "Sin imagen"
 msgstr "No Image"
 
-#: .\apps\games\templates\games\catalog.html:53
-#: .\templates\components\game_card.html:22
-msgid "Rentar"
-msgstr "Rent"
-
-#: .\apps\games\templates\games\catalog.html:63
-#: .\templates\components\game_card.html:31
-msgid "Comprar"
-msgstr "Buy"
-
 #: .\apps\games\templates\games\catalog.html:73
-#: .\apps\transactions\templates\transactions\cart_view.html:26
-msgid "Renta Compartida"
-msgstr "Shared Rent"
-
-#: .\apps\games\templates\games\catalog.html:82
-#: .\apps\games\templates\games\game_form.html:8
-msgid "Editar"
-msgstr "Edit"
-
-#: .\apps\games\templates\games\catalog.html:89
 #: .\apps\games\templates\games\game_confirm_delete.html:10
-#: .\apps\transactions\templates\transactions\cart_view.html:61
+#: .\apps\transactions\templates\transactions\cart_view.html:84
 msgid "Eliminar"
 msgstr "Delete"
 
-#: .\apps\games\templates\games\catalog.html:97
+#: .\apps\games\templates\games\catalog.html:81
 msgid "No hay juegos disponibles."
 msgstr "There isnt games avalaibles"
 
@@ -76,97 +57,49 @@ msgstr ""
 msgid "Detalle del Juego"
 msgstr ""
 
-#: .\apps\games\templates\games\game_detail.html:9
-msgid "Desarrollador:"
-msgstr ""
-
-#: .\apps\games\templates\games\game_detail.html:10
-msgid "Precio:"
-msgstr ""
-
-#: .\apps\games\templates\games\game_detail.html:11
-msgid "Descripción:"
-msgstr ""
-
-#: .\apps\games\templates\games\game_detail.html:14
-#: .\apps\games\templates\games\game_form.html:46
-msgid "Categorías"
-msgstr ""
-
-#: .\apps\games\templates\games\game_detail.html:22
-msgid "Este juego no tiene categorías asociadas."
-msgstr ""
-
-#: .\apps\games\templates\games\game_detail.html:26
-msgid "Reseñas"
-msgstr ""
-
-#: .\apps\games\templates\games\game_detail.html:34
-msgid "Publicado el"
-msgstr ""
-
-#: .\apps\games\templates\games\game_detail.html:39
+#: .\apps\games\templates\games\game_detail.html:85
 msgid "No hay reseñas para este juego."
 msgstr ""
 
-#: .\apps\games\templates\games\game_detail.html:43
+#: .\apps\games\templates\games\game_detail.html:90
 msgid "Deja tu reseña"
 msgstr ""
 
-#: .\apps\games\templates\games\game_detail.html:49
+#: .\apps\games\templates\games\game_detail.html:96
 msgid "Calificación"
 msgstr ""
 
-#: .\apps\games\templates\games\game_detail.html:61
+#: .\apps\games\templates\games\game_detail.html:108
 msgid "Comentario"
 msgstr ""
 
-#: .\apps\games\templates\games\game_detail.html:62
+#: .\apps\games\templates\games\game_detail.html:109
 msgid "Escribe tu reseña aquí..."
 msgstr ""
 
-#: .\apps\games\templates\games\game_detail.html:67
+#: .\apps\games\templates\games\game_detail.html:114
 msgid "Enviar Reseña"
 msgstr ""
 
-#: .\apps\games\templates\games\game_detail.html:74
+#: .\apps\games\templates\games\game_detail.html:122
 msgid "Volver al Catálogo"
 msgstr ""
 
-#: .\apps\games\templates\games\game_form.html:3
-msgid "Crear/Editar Juego"
-msgstr ""
+#: .\apps\games\templates\games\game_form.html:12
+msgid "Editar"
+msgstr "Edit"
 
-#: .\apps\games\templates\games\game_form.html:8
-#: .\apps\games\templates\games\game_form.html:60
+#: .\apps\games\templates\games\game_form.html:12
+#: .\apps\games\templates\games\game_form.html:111
 msgid "Crear"
 msgstr ""
 
-#: .\apps\games\templates\games\game_form.html:8
+#: .\apps\games\templates\games\game_form.html:12
 msgid "Juego"
 msgstr ""
 
-#: .\apps\games\templates\games\game_form.html:16
-msgid "Título"
-msgstr ""
-
-#: .\apps\games\templates\games\game_form.html:22
-msgid "Desarrollador"
-msgstr ""
-
-#: .\apps\games\templates\games\game_form.html:28
-msgid "Año"
-msgstr ""
-
-#: .\apps\games\templates\games\game_form.html:34
-msgid "Precio"
-msgstr ""
-
-#: .\apps\games\templates\games\game_form.html:40
-msgid "Imagen"
-msgstr ""
-
-#: .\apps\games\templates\games\game_form.html:60
+#: .\apps\games\templates\games\game_form.html:111
+#: .\apps\transactions\templates\transactions\cart_view.html:52
 msgid "Actualizar"
 msgstr ""
 
@@ -174,91 +107,115 @@ msgstr ""
 msgid "Mi Carrito"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\cart_view.html:24
+#: .\apps\transactions\templates\transactions\cart_view.html:23
 msgid "Renta"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\cart_view.html:25
+#: .\apps\transactions\templates\transactions\cart_view.html:24
 msgid "Compra"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\cart_view.html:39
-msgid "Usuarios compartidos:"
+#: .\apps\transactions\templates\transactions\cart_view.html:25
+msgid "Renta Compartida"
+msgstr "Shared Rent"
+
+#: .\apps\transactions\templates\transactions\cart_view.html:41
+msgid "Tipo de Renta:"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\cart_view.html:54
+#: .\apps\transactions\templates\transactions\cart_view.html:43
+msgid "Por hora"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:44
+msgid "Por día"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:48
+msgid "Horas:"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:48
+msgid "Días:"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:59
+msgid "Compartido con:"
+msgstr ""
+
+#: .\apps\transactions\templates\transactions\cart_view.html:76
 msgid "Añadir usuarios (usernames separados por coma):"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\cart_view.html:55
+#: .\apps\transactions\templates\transactions\cart_view.html:77
 msgid "ej: juan,marco,luis"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\cart_view.html:56
+#: .\apps\transactions\templates\transactions\cart_view.html:78
 msgid "Guardar Usuarios"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\cart_view.html:67
+#: .\apps\transactions\templates\transactions\cart_view.html:89
 msgid "Tu carrito está vacío."
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\cart_view.html:75
+#: .\apps\transactions\templates\transactions\cart_view.html:97
 msgid "Resumen del Pedido"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\cart_view.html:78
+#: .\apps\transactions\templates\transactions\cart_view.html:100
 msgid "Total"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\cart_view.html:84
+#: .\apps\transactions\templates\transactions\cart_view.html:106
 msgid "Finalizar Compra"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:7
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:25
 msgid "Detalles de Renta Compartida"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:12
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:30
 msgid "Usuarios que han pagado"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:17
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:36
 msgid "Pagado"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:20
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:39
 msgid "No hay usuarios que hayan pagado aún."
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:27
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:46
 msgid "Usuarios pendientes de pago"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:32
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:51
 msgid "Pendiente"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:35
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:54
 msgid "No hay usuarios pendientes de pago."
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:42
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:61
 msgid "Estado de tu pago"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:44
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:63
 msgid "Has completado el pago. Puedes descargar el juego."
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:46
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:65
 msgid "Tu pago está pendiente. Completa el pago para obtener acceso."
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:51
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:70
 msgid "Completar Pago"
 msgstr ""
 
-#: .\apps\transactions\templates\transactions\shared_rental_details.html:61
+#: .\apps\transactions\templates\transactions\shared_rental_details.html:80
 msgid "Volver a la Biblioteca"
 msgstr ""
 
@@ -309,70 +266,70 @@ msgstr ""
 msgid "Mi Biblioteca"
 msgstr ""
 
-#: .\apps\users\templates\users\library.html:10
+#: .\apps\users\templates\users\library.html:11
 msgid "Todos"
 msgstr ""
 
-#: .\apps\users\templates\users\library.html:11
+#: .\apps\users\templates\users\library.html:12
 msgid "Comprados"
 msgstr ""
 
-#: .\apps\users\templates\users\library.html:12
+#: .\apps\users\templates\users\library.html:13
 msgid "Rentados"
 msgstr ""
 
-#: .\apps\users\templates\users\library.html:13
+#: .\apps\users\templates\users\library.html:14
 msgid "Rentados Compartidos"
 msgstr ""
 
-#: .\apps\users\templates\users\library.html:18
+#: .\apps\users\templates\users\library.html:19
 msgid "Juegos Comprados"
 msgstr ""
 
-#: .\apps\users\templates\users\library.html:23
+#: .\apps\users\templates\users\library.html:24
 msgid "No has comprado juegos aún."
 msgstr ""
 
-#: .\apps\users\templates\users\library.html:30
+#: .\apps\users\templates\users\library.html:35
 msgid "Juegos Rentados"
 msgstr ""
 
-#: .\apps\users\templates\users\library.html:35
+#: .\apps\users\templates\users\library.html:41
 msgid "No has rentado juegos aún."
 msgstr ""
 
-#: .\apps\users\templates\users\library.html:42
+#: .\apps\users\templates\users\library.html:74
 msgid "Juegos Rentados Compartidos"
 msgstr ""
 
-#: .\apps\users\templates\users\library.html:53
+#: .\apps\users\templates\users\library.html:85
 msgid "No tienes juegos rentados compartidos aún."
 msgstr ""
 
-#: .\apps\users\templates\users\login.html:4
-#: .\apps\users\templates\users\login.html:10
+#: .\apps\users\templates\users\login.html:5
+#: .\apps\users\templates\users\login.html:11
 msgid "Iniciar Sesión"
 msgstr "Log in"
 
-#: .\apps\users\templates\users\login.html:19
+#: .\apps\users\templates\users\login.html:20
 #: .\apps\users\templates\users\register_form.html:26
 msgid "Usuario"
 msgstr ""
 
-#: .\apps\users\templates\users\login.html:27
-#: .\apps\users\templates\users\register_form.html:44
+#: .\apps\users\templates\users\login.html:28
+#: .\apps\users\templates\users\register_form.html:49
 msgid "Contraseña"
 msgstr ""
 
-#: .\apps\users\templates\users\login.html:45
+#: .\apps\users\templates\users\login.html:46
 msgid "Ingresar"
 msgstr ""
 
-#: .\apps\users\templates\users\login.html:51
+#: .\apps\users\templates\users\login.html:52
 msgid "¿No tienes cuenta?"
 msgstr ""
 
-#: .\apps\users\templates\users\login.html:53
+#: .\apps\users\templates\users\login.html:54
 msgid "Regístrate aquí"
 msgstr ""
 
@@ -389,35 +346,35 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: .\apps\users\templates\users\register_form.html:38
+#: .\apps\users\templates\users\register_form.html:42
 msgid "Nombre"
 msgstr ""
 
-#: .\apps\users\templates\users\register_form.html:53
+#: .\apps\users\templates\users\register_form.html:58
 msgid "Datos de Hardware"
 msgstr ""
 
-#: .\apps\users\templates\users\register_form.html:57
+#: .\apps\users\templates\users\register_form.html:62
 msgid "Procesador"
 msgstr ""
 
-#: .\apps\users\templates\users\register_form.html:63
+#: .\apps\users\templates\users\register_form.html:68
 msgid "RAM (GB)"
 msgstr ""
 
-#: .\apps\users\templates\users\register_form.html:69
+#: .\apps\users\templates\users\register_form.html:74
 msgid "Tarjeta Gráfica"
 msgstr ""
 
-#: .\apps\users\templates\users\register_form.html:87
+#: .\apps\users\templates\users\register_form.html:92
 msgid "Registrarse"
 msgstr ""
 
-#: .\apps\users\templates\users\register_form.html:93
+#: .\apps\users\templates\users\register_form.html:98
 msgid "¿Ya tienes una cuenta?"
 msgstr ""
 
-#: .\apps\users\templates\users\register_form.html:95
+#: .\apps\users\templates\users\register_form.html:100
 msgid "Inicia sesión aquí"
 msgstr ""
 
@@ -455,18 +412,15 @@ msgid "Carrito"
 msgstr ""
 
 #: .\templates\components\game_card.html:36
-msgid "Instalar"
+msgid "No disponible (pagos pendientes)"
 msgstr ""
 
-#: .\templates\components\game_card.html:39
-msgid "Descargar"
-msgstr ""
-
-#: .\templates\components\game_card.html:41
-#: .\templates\components\game_card.html:47
+#: .\templates\components\game_card.html:38
 msgid "Ver detalles"
 msgstr ""
 
-#: .\templates\components\game_card.html:45
-msgid "No disponible (pagos pendientes)"
-msgstr ""
+#~ msgid "Rentar"
+#~ msgstr "Rent"
+
+#~ msgid "Comprar"
+#~ msgstr "Buy"

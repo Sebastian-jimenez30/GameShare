@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
 <div class="bg-gray-900 py-12">
@@ -27,13 +28,8 @@
     </div>
 
     <!-- Juegos Rentados -->
-<<<<<<< HEAD
-    <div class="category-section" data-category="rentados">
-      <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">Juegos Rentados</h3>
-=======
     <div class="category-section hidden" data-category="rentados">
       <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">{% trans "Juegos Rentados" %}</h3>
->>>>>>> origin/main
       <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
         {% for game in rented_games %}
           {% include "components/game_card.html" with game=game game_url="#" actions="library" %}
@@ -44,7 +40,6 @@
     </div>
 
     <!-- Juegos Rentados Compartidos -->
-<<<<<<< HEAD
     <div class="category-section" data-category="rentados_compartidos">
       <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">Juegos Rentados Compartidos</h3>
 
@@ -69,23 +64,6 @@
       {% if available_shared_rentals|length == 0 and unavailable_shared_rentals|length == 0 %}
         <p class="text-center text-gray-400 text-lg">No tienes juegos rentados compartidos aún.</p>
       {% endif %}
-=======
-    <div class="category-section hidden" data-category="rentados_compartidos">
-      <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">{% trans "Juegos Rentados Compartidos" %}</h3>
-      <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
-        {% for shared_rental in available_shared_rentals %}
-          {% include "components/game_card.html" with game=shared_rental.game game_url="#" actions="shared_available" %}
-        {% endfor %}
-        
-        {% for shared_rental in unavailable_shared_rentals %}
-          {% include "components/game_card.html" with game=shared_rental.game game_url="#" actions="shared_unavailable" %}
-        {% endfor %}
-
-        {% if available_shared_rentals|length == 0 and unavailable_shared_rentals|length == 0 %}
-          <p class="text-center text-gray-400 text-lg">{% trans "No tienes juegos rentados compartidos aún." %}</p>
-        {% endif %}
-      </div>
->>>>>>> origin/main
     </div>
   </div>
 </div>

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
 <section class="bg-gray-900 py-12 antialiased md:py-16">
@@ -20,9 +21,9 @@
                 <form action="{% url 'update_cart_item_type' item.obj.id %}" method="post">
                   {% csrf_token %}
                   <select name="item_type" onchange="this.form.submit()" class="form-select text-gray-900 dark:text-white bg-gray-700 border border-gray-600 rounded-md px-3 py-2">
-                    <option value="rental" {% if item.obj.item_type == 'rental' %}selected{% endif %}>Renta</option>
-                    <option value="purchase" {% if item.obj.item_type == 'purchase' %}selected{% endif %}>Compra</option>
-                    <option value="shared" {% if item.obj.item_type == 'shared' %}selected{% endif %}>Renta Compartida</option>
+                    <option value="rental" {% if item.obj.item_type == 'rental' %}selected{% endif %}>{% trans "Renta" %}</option>
+                    <option value="purchase" {% if item.obj.item_type == 'purchase' %}selected{% endif %}>{% trans "Compra" %}</option>
+                    <option value="shared" {% if item.obj.item_type == 'shared' %}selected{% endif %}>{% trans "Renta Compartida" %}</option>
                   </select>
                 </form>
               </div>
@@ -34,34 +35,29 @@
 
             <!-- Opciones adicionales por tipo -->
             <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md mt-4">
-
-
               {% if item.obj.item_type == 'rental' %}
-
                 <form method="post" action="{% url 'update_cart_item_quantity' item.obj.id %}" class="space-y-2">
                   {% csrf_token %}
                 
-                  <!-- Tipo de Renta dentro del mismo formulario -->
-                  <label class="text-gray-400 block">Tipo de Renta:</label>
+                  <label class="text-gray-400 block">{% trans "Tipo de Renta:" %}</label>
                   <select name="rental_type" class="form-select bg-gray-700 text-white px-3 py-2 rounded-md w-full">
-                    <option value="hourly" {% if item.obj.rental_type == 'hourly' %}selected{% endif %}>Por hora</option>
-                    <option value="daily" {% if item.obj.rental_type == 'daily' %}selected{% endif %}>Por día</option>
+                    <option value="hourly" {% if item.obj.rental_type == 'hourly' %}selected{% endif %}>{% trans "Por hora" %}</option>
+                    <option value="daily" {% if item.obj.rental_type == 'daily' %}selected{% endif %}>{% trans "Por día" %}</option>
                   </select>
                 
-                  <!-- Duración -->
                   <label for="duration" class="text-gray-400 block mt-2">
-                    {% if item.obj.rental_type == 'hourly' %}Horas:{% else %}Días:{% endif %}
+                    {% if item.obj.rental_type == 'hourly' %}{% trans "Horas:" %}{% else %}{% trans "Días:" %}{% endif %}
                   </label>
                   <input type="number" name="duration" min="1" value="{{ item.obj.duration }}" class="w-24 bg-gray-700 text-white rounded-md px-2 py-1 text-center">
                 
-                  <button type="submit" class="mt-3 px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700">Actualizar</button>
+                  <button type="submit" class="mt-3 px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700">{% trans "Actualizar" %}</button>
                 </form>
               {% endif %}
 
               {% if item.obj.item_type == 'shared' %}
                 {% if item.obj.shared_with.all %}
                   <div class="text-gray-300">
-                    <strong>Compartido con:</strong>
+                    <strong>{% trans "Compartido con:" %}</strong>
                     <ul class="list-disc pl-5">
                       {% for user in item.obj.shared_with.all %}
                       <li class="flex justify-between">
@@ -78,15 +74,15 @@
 
                 <form method="post" action="{% url 'update_shared_users' item.obj.id %}" class="mt-2">
                   {% csrf_token %}
-                  <label class="text-gray-400">Añadir usuarios (usernames separados por coma):</label>
-                  <input type="text" name="usernames" class="w-full bg-gray-700 text-white rounded-md px-3 py-2 mt-2" placeholder="ej: juan,marco,luis">
-                  <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Guardar Usuarios</button>
+                  <label class="text-gray-400">{% trans "Añadir usuarios (usernames separados por coma):" %}</label>
+                  <input type="text" name="usernames" class="w-full bg-gray-700 text-white rounded-md px-3 py-2 mt-2" placeholder="{% trans 'ej: juan,marco,luis' %}">
+                  <button type="submit" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">{% trans "Guardar Usuarios" %}</button>
                 </form>
               {% endif %}
 
               <form method="post" action="{% url 'remove_from_cart' item.obj.id %}" class="mt-2">
                 {% csrf_token %}
-                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">{% trans "Eliminar" %}</button>
               </form>
             </div>
           </div>
@@ -102,7 +98,7 @@
           <p class="text-xl font-semibold text-gray-200">{% trans "Resumen del Pedido" %}</p>
           <div class="space-y-4">
             <dl class="flex items-center justify-between gap-4">
-              <dt class="text-base font-normal text-gray-400">Total</dt>
+              <dt class="text-base font-normal text-gray-400">{% trans "Total" %}</dt>
               <dd class="text-base font-bold text-gray-200">${{ cart_total_amount }}</dd>
             </dl>
           </div>
