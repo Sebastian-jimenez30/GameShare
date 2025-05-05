@@ -1,7 +1,8 @@
-# apps/transactions/repositories.py
 
 from typing import List, Optional
 from django.core.exceptions import ObjectDoesNotExist
+from decimal import Decimal
+from datetime import timedelta, datetime
 
 from apps.users.models import User
 from apps.games.models import Game
@@ -37,6 +38,14 @@ class RentalRepository(IRentalRepository):
 
     def list_rentals(self) -> List[Rental]:
         return list(Rental.objects.all())
+    
+    @staticmethod
+    def calcular_end_time(rental_type: str, quantity: int, start_time) -> datetime:
+        if rental_type == 'daily':
+            return start_time + timedelta(days=quantity)
+        elif rental_type == 'hourly':
+            return start_time + timedelta(hours=quantity)
+        return start_time
 
 
 class SharedRentalRepository(ISharedRentalRepository):
@@ -151,10 +160,36 @@ class CartItemRepository(ICartItemRepository):
     def update_cart_item(self, item_id: int, cart_item_data: dict) -> Optional[CartItem]:
         item = self.get_cart_item_by_id(item_id)
         if item:
+            print(f"[DEBUG] Actualizando item {item_id} con: {cart_item_data}")
             for field, value in cart_item_data.items():
                 setattr(item, field, value)
             item.save()
+            print(f"[OK] Item {item_id} actualizado.")
+        else:
+            print(f"[ERROR] No se encontró el item {item_id} para actualizar.")
         return item
+
+    def get_total_price(self, item: CartItem) -> Decimal:
+        print(f"[DEBUG] Calculando total para item_id={item.id}, tipo={item.item_type}, juego={item.game.title}")
+
+        if item.item_type == 'purchase':
+            total = item.game.purchase_price * item.quantity
+            print(f"[INFO] Tipo: Compra | Precio unitario: {item.game.purchase_price} | Cantidad: {item.quantity} | Total: {total}")
+            return total
+
+        elif item.item_type == 'rental':
+            duration = item.duration or 1
+            if item.rental_type == 'hourly':
+                total = item.game.rental_price_per_hour * duration
+                print(f"[INFO] Tipo: Renta por hora | Precio por hora: {item.game.rental_price_per_hour} | Duración: {duration} | Total: {total}")
+                return total
+            elif item.rental_type == 'daily':
+                total = item.game.rental_price_per_day * duration
+                print(f"[INFO] Tipo: Renta por día | Precio por día: {item.game.rental_price_per_day} | Duración: {duration} | Total: {total}")
+                return total
+
+        print(f"[WARN] Tipo de item desconocido o mal configurado para item_id={item.id}")
+        return Decimal('0.00')
 
 
 class InvoiceRepository(IInvoiceRepository):

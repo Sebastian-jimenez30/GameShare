@@ -2,7 +2,7 @@ from django.urls import path
 from apps.transactions.views import (
     AddToCartView, CartView, RemoveFromCartView, UpdateCartItemTypeView, 
     CheckoutCartView, UpdateCartItemSharedUsersView, 
-    RemoveSharedUserFromCartItemView, SharedRentalDetailsView, CompleteSharedPaymentView
+    RemoveSharedUserFromCartItemView, SharedRentalDetailsView, CompleteSharedPaymentView, UpdateCartItemQuantityView
 )
 
 urlpatterns = [
@@ -17,4 +17,6 @@ urlpatterns = [
 
     path('shared-rental-details/<int:pk>/', SharedRentalDetailsView.as_view(), name='shared_rental_details'),
     path('shared-payment/<int:payment_id>/complete/', CompleteSharedPaymentView.as_view(), name='complete_shared_payment'),
+    path('cart/update-quantity/<int:item_id>/', UpdateCartItemQuantityView.as_view(), name='update_cart_item_quantity'),
+
 ]

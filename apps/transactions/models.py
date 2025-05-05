@@ -5,9 +5,6 @@ from apps.games.models import Game
 
 
 class Transaction(models.Model):
-    """
-    Transacción general: puede ser una compra, alquiler o alquiler compartido.
-    """
     TRANSACTION_TYPE_CHOICES = [
         ('purchase', 'Purchase'),
         ('rental', 'Rental'),
@@ -25,13 +22,11 @@ class Transaction(models.Model):
 
 
 class Rental(models.Model):
-    """
-    Alquiler individual de un juego (por hora o día).
-    """
     RENTAL_TYPE_CHOICES = [
         ('hourly', 'Hourly'),
         ('daily', 'Daily'),
     ]
+
     transaction = models.OneToOneField(Transaction, on_delete=models.CASCADE, related_name='rental_detail')
     rental_type = models.CharField(max_length=10, choices=RENTAL_TYPE_CHOICES)
     start_time = models.DateTimeField()
@@ -43,9 +38,6 @@ class Rental(models.Model):
 
 
 class SharedRental(models.Model):
-    """
-    Alquiler grupal donde múltiples usuarios comparten la renta y el costo.
-    """
     game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='shared_rentals')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_shared_rentals')
     start_time = models.DateTimeField()
@@ -61,13 +53,11 @@ class SharedRental(models.Model):
 
 
 class SharedRentalPayment(models.Model):
-    """
-    Pagos individuales por parte de los usuarios en un alquiler compartido.
-    """
     STATUS_CHOICES = [
         ('pending', 'Pending'),
         ('completed', 'Completed'),
     ]
+
     shared_rental = models.ForeignKey(SharedRental, on_delete=models.CASCADE, related_name='payments')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shared_rental_payments')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -82,22 +72,15 @@ class SharedRentalPayment(models.Model):
 
 
 class Cart(models.Model):
-    """
-    Carrito de un usuario, puede contener compras, alquileres o rentas compartidas.
-    """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='cart')
 
     def __str__(self):
         return f"Cart of {self.user.username}"
 
-    def total_amount(self):
-        return sum(item.get_total_price() for item in self.items.all())
+    # Se eliminará `total_amount` como propiedad aquí si se va a delegar al servicio
 
 
 class CartItem(models.Model):
-    """
-    Item en el carrito. Soporta compras, alquileres y alquileres compartidos.
-    """
     ITEM_TYPE_CHOICES = [
         ('purchase', 'Purchase'),
         ('rental', 'Rental'),
@@ -113,27 +96,18 @@ class CartItem(models.Model):
     item_type = models.CharField(max_length=15, choices=ITEM_TYPE_CHOICES)
     quantity = models.PositiveIntegerField(default=1)
 
-    # Para alquiler
     rental_type = models.CharField(max_length=10, choices=RENTAL_TYPE_CHOICES, null=True, blank=True)
+    duration = models.PositiveIntegerField(default=1, help_text="Cantidad de horas o días para la renta")
 
-    # Para renta compartida
     shared_with = models.ManyToManyField(User, blank=True, related_name='shared_cart_items')
 
     def __str__(self):
         return f"{self.item_type.title()} - {self.game.title}"
 
-    def get_total_price(self):
-        if self.item_type == 'purchase':
-            return self.game.purchase_price * self.quantity
-        elif self.item_type == 'rental':
-            return (self.game.rental_price_per_hour if self.rental_type == 'hourly' else self.game.rental_price_per_day) * self.quantity
-        return Decimal('0.00')  # Para shared, se calcula por separado
+    # Se elimina get_total_price del modelo
 
 
 class Payment(models.Model):
-    """
-    Pagos individuales del usuario.
-    """
     METHOD_CHOICES = [
         ('card', 'Card'),
         ('paypal', 'PayPal'),
@@ -155,9 +129,6 @@ class Payment(models.Model):
 
 
 class Invoice(models.Model):
-    """
-    Factura generada a partir de una transacción.
-    """
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invoices')
     transaction = models.OneToOneField(Transaction, on_delete=models.CASCADE, related_name='invoice')
     total = models.DecimalField(max_digits=10, decimal_places=2)

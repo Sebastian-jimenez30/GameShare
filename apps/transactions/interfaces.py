@@ -2,6 +2,8 @@
 
 from abc import ABC, abstractmethod
 from typing import List, Optional
+from decimal import Decimal
+from datetime import datetime
 from .models import (
     Rental, Transaction, SharedRental, SharedRentalPayment,
     Cart, CartItem, Invoice, Payment
@@ -29,6 +31,11 @@ class IRentalRepository(ABC):
 
     @abstractmethod
     def list_rentals(self) -> List[Rental]:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def calcular_end_time(rental_type: str, quantity: int, start_time: datetime) -> datetime:
         pass
 
 
@@ -83,6 +90,35 @@ class ISharedRentalPaymentRepository(ABC):
         pass
 
 
+class ICartItemRepository(ABC):
+    @abstractmethod
+    def create_cart_item(self, cart_item_data: dict) -> CartItem:
+        pass
+
+    @abstractmethod
+    def get_cart_item_by_id(self, item_id: int) -> Optional[CartItem]:
+        pass
+
+    @abstractmethod
+    def get_item_by_cart_and_game(self, cart: Cart, game: Game) -> Optional[CartItem]:
+        pass
+
+    @abstractmethod
+    def update_cart_item(self, item_id: int, cart_item_data: dict) -> Optional[CartItem]:
+        pass
+
+    @abstractmethod
+    def delete_cart_item(self, item_id: int) -> bool:
+        pass
+
+    @abstractmethod
+    def list_cart_items(self) -> List[CartItem]:
+        pass
+
+    @abstractmethod
+    def get_total_price(self, item: CartItem) -> Decimal:
+        pass
+
 class ICartRepository(ABC):
     @abstractmethod
     def create_cart(self, cart_data: dict) -> Cart:
@@ -108,31 +144,6 @@ class ICartRepository(ABC):
     def list_carts(self) -> List[Cart]:
         pass
 
-
-class ICartItemRepository(ABC):
-    @abstractmethod
-    def create_cart_item(self, cart_item_data: dict) -> CartItem:
-        pass
-
-    @abstractmethod
-    def get_cart_item_by_id(self, item_id: int) -> Optional[CartItem]:
-        pass
-
-    @abstractmethod
-    def get_item_by_cart_and_game(self, cart: Cart, game: Game) -> Optional[CartItem]:
-        pass
-
-    @abstractmethod
-    def update_cart_item(self, item_id: int, cart_item_data: dict) -> Optional[CartItem]:
-        pass
-
-    @abstractmethod
-    def delete_cart_item(self, item_id: int) -> bool:
-        pass
-
-    @abstractmethod
-    def list_cart_items(self) -> List[CartItem]:
-        pass
 
 
 class IInvoiceRepository(ABC):

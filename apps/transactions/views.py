@@ -33,8 +33,20 @@ class AddToCartView(LoginRequiredMixin, View):
         rental_type = request.POST.get('rental_type')  # Puede ser None
 
         try:
+            duration = int(request.POST.get('duration', 1))
+            if duration < 1:
+                raise ValueError("La duración debe ser mayor que cero.")
+        except (ValueError, TypeError):
+            duration = 1  # Valor por defecto si no se especifica o es inválido
+
+        try:
             transaction_service.add_item_to_cart_by_game_id(
-                request.user.id, game_id, item_type, quantity=1, rental_type=rental_type
+                user_id=request.user.id,
+                game_id=game_id,
+                item_type=item_type,
+                quantity=1,
+                rental_type=rental_type,
+                duration=duration
             )
             messages.success(request, "Juego añadido correctamente al carrito.")
         except ValueError as e:
@@ -49,8 +61,23 @@ class CartView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cart = transaction_service.get_or_create_cart_for_user(self.request.user)
-        context['cart'] = cart
-        context['items'] = cart.items.all()
+        items = cart.items.all()
+
+        # Preparamos la lista de ítems junto con su precio calculado
+        item_data = [
+            {
+                'obj': item,
+                'price': transaction_service.cart_item_repo.get_total_price(item)
+            } for item in items
+        ]
+
+        total = sum(entry['price'] for entry in item_data)
+
+        context.update({
+            'cart': cart,
+            'items': item_data,
+            'cart_total_amount': total
+        })
         return context
 
 class RemoveFromCartView(LoginRequiredMixin, View):
@@ -182,4 +209,47 @@ class RemoveSharedUserFromCartItemView(LoginRequiredMixin, View):
         except Exception as e:
             messages.error(request, str(e))
 
+        return redirect('cart_view')
+
+import logging
+logger = logging.getLogger(__name__)
+class UpdateCartItemQuantityView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        item_id = kwargs.get('item_id')
+
+        # Validar duración
+        try:
+            duration = int(request.POST.get('duration', 1))
+            if duration < 1:
+                raise ValueError("La duración debe ser mayor que cero.")
+        except (ValueError, TypeError):
+            messages.error(request, "Duración inválida.")
+            return redirect('cart_view')
+
+        # Capturar tipo de renta y normalizar 'None' como None
+        rental_type = request.POST.get('rental_type')
+        if rental_type == 'None':
+            rental_type = None
+
+        # Obtener ítem
+        item = transaction_service.cart_item_repo.get_cart_item_by_id(item_id)
+        if not item or item.cart.user != request.user:
+            messages.error(request, "Ítem no encontrado o acceso denegado.")
+            return redirect('cart_view')
+
+        # Log para debug
+        logger.debug(f"[DEBUG] Actualizando item {item_id} con: "
+                     f"{{'duration': {duration}, 'rental_type': {rental_type}, 'quantity': 1}}")
+
+        # Actualizar ítem
+        transaction_service.cart_item_repo.update_cart_item(item_id, {
+            'duration': duration,
+            'rental_type': rental_type,
+            'quantity': 1
+        })
+
+        # Recalcular total
+        transaction_service.update_cart_total(item.cart)
+
+        messages.success(request, "Duración y tipo de renta actualizados correctamente.")
         return redirect('cart_view')

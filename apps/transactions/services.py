@@ -46,11 +46,13 @@ class TransactionService:
             raise ValueError("El carrito está vacío.")
 
         for item in items:
+            total_price = self.cart_item_repo.get_total_price(item)
+
             transaction = Transaction.objects.create(
                 user=user,
                 game=item.game,
                 transaction_type=item.item_type if item.item_type != 'shared' else 'shared_rental',
-                total_price=item.get_total_price()
+                total_price=total_price
             )
 
             if item.item_type == 'rental':
@@ -58,7 +60,11 @@ class TransactionService:
                     'transaction': transaction,
                     'rental_type': item.rental_type or 'daily',
                     'start_time': now(),
-                    'end_time': now() + timedelta(days=1 if item.rental_type == 'daily' else 0, hours=1 if item.rental_type == 'hourly' else 0),
+                    'end_time': self.rental_repo.calcular_end_time(
+                        item.rental_type or 'daily',
+                        item.duration or 1,
+                        now()
+                    ),
                     'status': 'active'
                 })
 
@@ -68,33 +74,26 @@ class TransactionService:
                     shared_users.append(user)
                 self.create_shared_rental_with_payments(item.game, shared_users)
 
-            # En todos los casos se genera factura (excepto shared, que se maneja por pagos separados)
             if item.item_type in ['purchase', 'rental']:
                 self.invoice_repo.create_invoice({
                     'user': user,
                     'transaction': transaction,
                     'total': transaction.total_price,
-                    'pdf_file': 'invoices/dummy.pdf'  # Temporal, luego se genera real
+                    'pdf_file': 'invoices/dummy.pdf'
                 })
 
         items.delete()
 
-    def create_shared_rental_with_payments(self, game: Game, users: List[User]):
-        if not users:
-            raise ValueError("La lista de usuarios no puede estar vacía.")
 
-        total_amount = game.purchase_price
-        shared_rental = self.shared_rental_repo.create_shared_rental({
-            'game': game,
-            'created_by': users[0],
-            'start_time': now(),
-            'end_time': now() + timedelta(days=3),
-            'total_cost': total_amount,
-            'users': users
-        })
-        return shared_rental
-
-    def add_item_to_cart_by_game_id(self, user_id: int, game_id: int, item_type: str, quantity: int = 1, rental_type: str = None):
+    def add_item_to_cart_by_game_id(
+        self,
+        user_id: int,
+        game_id: int,
+        item_type: str,
+        quantity: int = 1,
+        rental_type: str = None,
+        duration: int = None
+    ):
         user = User.objects.get(id=user_id)
         game = Game.objects.get(id=game_id)
 
@@ -108,6 +107,8 @@ class TransactionService:
             existing_item.quantity += quantity
             if rental_type:
                 existing_item.rental_type = rental_type
+            if duration:
+                existing_item.duration = duration
             existing_item.save()
         else:
             self.cart_item_repo.create_cart_item({
@@ -115,7 +116,8 @@ class TransactionService:
                 'game': game,
                 'item_type': item_type,
                 'quantity': quantity,
-                'rental_type': rental_type
+                'rental_type': rental_type,
+                'duration': duration
             })
 
     def remove_item_from_cart(self, cart_item_id: int):
@@ -135,6 +137,21 @@ class TransactionService:
         })
 
     def update_cart_total(self, cart):
-        total = sum(item.get_total_price() for item in cart.items.all())
+        total = Decimal('0.00')
+        for item in cart.items.all():
+            total += self.cart_item_repo.get_total_price(item)
         cart.total = total
         cart.save()
+
+
+    def create_shared_rental_with_payments(self, game: Game, users: List[User]):
+        total_amount = game.purchase_price
+        shared_rental = self.shared_rental_repo.create_shared_rental({
+            'game': game,
+            'created_by': users[0],
+            'start_time': now(),
+            'end_time': now() + timedelta(days=3),
+            'total_cost': total_amount,
+            'users': users
+        })
+        return shared_rental

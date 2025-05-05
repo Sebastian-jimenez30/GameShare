@@ -13,58 +13,70 @@
           {% for item in items %}
           <div class="rounded-lg border border-gray-700 bg-gray-800 p-4 shadow-sm md:p-6">
             <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
-              {% include "components/game_card.html" with game=item.game game_url="#" actions="cart" item_id=item.id item_type=item.item_type %}
+              {% include "components/game_card.html" with game=item.obj.game game_url="#" actions="cart" item_id=item.obj.id item_type=item.obj.item_type %}
 
               <!-- Selector tipo de ítem -->
               <div class="flex items-center justify-between md:order-3 md:justify-end">
-                <form action="{% url 'update_cart_item_type' item.id %}" method="post">
+                <form action="{% url 'update_cart_item_type' item.obj.id %}" method="post">
                   {% csrf_token %}
                   <select name="item_type" onchange="this.form.submit()" class="form-select text-gray-900 dark:text-white bg-gray-700 border border-gray-600 rounded-md px-3 py-2">
-                    <option value="rental" {% if item.item_type == 'rental' %}selected{% endif %}>Renta</option>
-                    <option value="purchase" {% if item.item_type == 'purchase' %}selected{% endif %}>Compra</option>
-                    <option value="shared" {% if item.item_type == 'shared' %}selected{% endif %}>Renta Compartida</option>
+                    <option value="rental" {% if item.obj.item_type == 'rental' %}selected{% endif %}>Renta</option>
+                    <option value="purchase" {% if item.obj.item_type == 'purchase' %}selected{% endif %}>Compra</option>
+                    <option value="shared" {% if item.obj.item_type == 'shared' %}selected{% endif %}>Renta Compartida</option>
                   </select>
                 </form>
               </div>
 
-              <!-- Precio total del ítem -->
               <div class="text-end md:order-4 md:w-32">
-                <p class="text-base font-bold text-gray-200">${{ item.get_total_price }}</p>
+                <p class="text-base font-bold text-gray-200">${{ item.price }}</p>
               </div>
             </div>
 
             <!-- Opciones adicionales por tipo -->
             <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md mt-4">
-              {% if item.item_type == 'rental' %}
-                <form method="post" action="{% url 'update_cart_item_type' item.id %}">
+
+
+              {% if item.obj.item_type == 'rental' %}
+
+                <form method="post" action="{% url 'update_cart_item_quantity' item.obj.id %}" class="space-y-2">
                   {% csrf_token %}
-                  <label class="text-gray-400 block mb-1">Tipo de Renta:</label>
-                  <select name="rental_type" class="form-select bg-gray-700 text-white px-3 py-2 rounded-md" onchange="this.form.submit()">
-                    <option value="hourly" {% if item.rental_type == 'hourly' %}selected{% endif %}>Por hora</option>
-                    <option value="daily" {% if item.rental_type == 'daily' %}selected{% endif %}>Por día</option>
+                
+                  <!-- Tipo de Renta dentro del mismo formulario -->
+                  <label class="text-gray-400 block">Tipo de Renta:</label>
+                  <select name="rental_type" class="form-select bg-gray-700 text-white px-3 py-2 rounded-md w-full">
+                    <option value="hourly" {% if item.obj.rental_type == 'hourly' %}selected{% endif %}>Por hora</option>
+                    <option value="daily" {% if item.obj.rental_type == 'daily' %}selected{% endif %}>Por día</option>
                   </select>
+                
+                  <!-- Duración -->
+                  <label for="duration" class="text-gray-400 block mt-2">
+                    {% if item.obj.rental_type == 'hourly' %}Horas:{% else %}Días:{% endif %}
+                  </label>
+                  <input type="number" name="duration" min="1" value="{{ item.obj.duration }}" class="w-24 bg-gray-700 text-white rounded-md px-2 py-1 text-center">
+                
+                  <button type="submit" class="mt-3 px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700">Actualizar</button>
                 </form>
               {% endif %}
 
-              {% if item.item_type == 'shared' %}
-                {% if item.shared_with.all %}
-                <div class="text-gray-300">
-                  <strong>Compartido con:</strong>
-                  <ul class="list-disc pl-5">
-                    {% for user in item.shared_with.all %}
-                    <li class="flex justify-between">
-                      {{ user.username }}
-                      <form method="post" action="{% url 'remove_shared_user' item.id user.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="text-red-500 hover:text-red-700 ml-2">✕</button>
-                      </form>
-                    </li>
-                    {% endfor %}
-                  </ul>
-                </div>
+              {% if item.obj.item_type == 'shared' %}
+                {% if item.obj.shared_with.all %}
+                  <div class="text-gray-300">
+                    <strong>Compartido con:</strong>
+                    <ul class="list-disc pl-5">
+                      {% for user in item.obj.shared_with.all %}
+                      <li class="flex justify-between">
+                        {{ user.username }}
+                        <form method="post" action="{% url 'remove_shared_user' item.obj.id user.id %}">
+                          {% csrf_token %}
+                          <button type="submit" class="text-red-500 hover:text-red-700 ml-2">✕</button>
+                        </form>
+                      </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
                 {% endif %}
 
-                <form method="post" action="{% url 'update_shared_users' item.id %}" class="mt-2">
+                <form method="post" action="{% url 'update_shared_users' item.obj.id %}" class="mt-2">
                   {% csrf_token %}
                   <label class="text-gray-400">Añadir usuarios (usernames separados por coma):</label>
                   <input type="text" name="usernames" class="w-full bg-gray-700 text-white rounded-md px-3 py-2 mt-2" placeholder="ej: juan,marco,luis">
@@ -72,7 +84,7 @@
                 </form>
               {% endif %}
 
-              <form method="post" action="{% url 'remove_from_cart' item.id %}" class="mt-2">
+              <form method="post" action="{% url 'remove_from_cart' item.obj.id %}" class="mt-2">
                 {% csrf_token %}
                 <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Eliminar</button>
               </form>
@@ -91,7 +103,7 @@
           <div class="space-y-4">
             <dl class="flex items-center justify-between gap-4">
               <dt class="text-base font-normal text-gray-400">Total</dt>
-              <dd class="text-base font-bold text-gray-200">${{ cart.total_amount }}</dd>
+              <dd class="text-base font-bold text-gray-200">${{ cart_total_amount }}</dd>
             </dl>
           </div>
           <form method="post" action="{% url 'checkout_cart' %}">
@@ -103,4 +115,13 @@
     </div>
   </div>
 </section>
+
+<script>
+  document.querySelectorAll('form[action*="update_cart_item_quantity"]').forEach(form => {
+    form.addEventListener('submit', e => {
+      const input = form.querySelector('input[name="duration"]');
+      console.log(`[JS DEBUG] Enviando duración: ${input.value}`);
+    });
+  });
+</script>
 {% endblock %}
