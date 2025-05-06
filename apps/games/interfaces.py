@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from .models import Game, Category, Recommendation, Review, GameRequirements
+from apps.users.models import User
 
 
 class IGameRepository(ABC):
@@ -60,6 +61,19 @@ class IRecommendationRepository(ABC):
 
     @abstractmethod
     def get_recommendations_by_user(self, user_id: int) -> List[Recommendation]:
+        pass
+
+    @abstractmethod
+    def get_user_by_id(self, user_id: int) -> User:
+        pass
+
+    @abstractmethod
+    def get_all_games(self) -> List[Game]:
+        pass
+    
+    @abstractmethod
+    def clear_recommendations_for_user(self, user_id: int) -> None:
+        """Delete all recommendations for a given user."""
         pass
 
 

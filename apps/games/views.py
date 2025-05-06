@@ -3,8 +3,8 @@ from django.views.generic import TemplateView, DetailView, CreateView, UpdateVie
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .forms import GameForm, ReviewForm
-from .services import GameService, ReviewService, CatalogService
-from .repositories import GameRepository, ReviewRepository, GameCategoryRepository, GameRequirementsRepository, GameAnalyticsRepository
+from .services import GameService, ReviewService, CatalogService, RecommendationService
+from .repositories import GameRepository, ReviewRepository, GameCategoryRepository, GameRequirementsRepository, GameAnalyticsRepository, RecommendationRepository
 
 
 # Servicios
@@ -167,3 +167,16 @@ class GameDeleteView(UserPassesTestMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         game_service.delete_game(self.get_object().id)
         return redirect(self.success_url)
+
+
+class RecommendationListView(LoginRequiredMixin, TemplateView):
+    template_name = 'games/recommendations.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service = RecommendationService(RecommendationRepository())
+
+        # Generar (si no existen) y obtener recomendaciones para el usuario
+        service.recommend_based_on_hardware(self.request.user)
+        context['recommendations'] = service.get_user_recommendations(self.request.user.id)
+        return context
