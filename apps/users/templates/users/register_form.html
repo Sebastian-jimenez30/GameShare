@@ -36,7 +36,7 @@
 
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-300">{% trans "Nombre" %}</label>
-                            <input type="text" name="name" id="name" required
+                            <input type="text" name="full_name" id="full_name" required
                                    class="block w-full rounded-md border border-gray-600 bg-gray-700 text-gray-200 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm">
                         </div>                        
 
@@ -72,6 +72,18 @@
                         </div>
                     </div>
                 </div>
+
+                {% if form.errors %}
+                    <div class="mt-4 text-red-400 text-sm">
+                        <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
 
                 {% if messages %}
                     <div class="mt-2 text-center text-red-400 text-sm">

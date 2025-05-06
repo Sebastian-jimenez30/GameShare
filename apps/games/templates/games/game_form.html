@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% load widget_tweaks %}  {# Asegúrate de tener django-widget-tweaks instalado y cargado #}
+{% load widget_tweaks %} 
+{% load i18n %}
 
 {% block title %}
   {% if form.instance.pk %}Editar{% else %}Crear{% endif %} Juego
