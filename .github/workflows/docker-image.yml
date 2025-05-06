@@ -1,22 +1,44 @@
 name: Docker Image CI
 on:
- push:
-   branches: [ main ]
- pull_request:
-   branches: [ main ]
-jobs:
- build:
-   runs-on: ubuntu-latest
-   steps:
-   - uses: actions/checkout@v4
-   - name: docker login
-     env:
-       DOCKER_USER: juandzm2105
-       DOCKER_PASS: Sanpancracio01-
-     run: |
-       docker login -u $DOCKER_USER -p $DOCKER_PASS
-   - name: Build the Docker image
-     run: docker build . --file Dockerfile --tag juandzm2105/gameshare:latest
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-   - name: Docker Push
-     run: docker push juandzm2105/gameshare
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    # Paso 1: Crear el archivo .env desde .env.example y las variables de entorno directas
+    - name: Create .env from .env.example and environment variables
+      run: |
+        # Copiar el archivo .env.example a .env
+        cp .env.example .env
+        
+        # Usar las variables de entorno directas para completar el archivo .env
+        echo "DEBUG=1" >> .env
+        echo "DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 0.0.0.0 [::1]" >> .env
+        echo "DATABASE=mysql" >> .env
+        echo "SQL_ENGINE=django.db.backends.mysql" >> .env
+        echo "SQL_PORT=3306" >> .env
+        echo "SQL_DATABASE=gameshare" >> .env  # Nombre de la base de datos en Aurora
+        echo "SQL_ROOT_PASSWORD=Sanpancracio01" >> .env  # Contraseña de root de la base de datos
+        echo "SQL_USER=admin" >> .env  # Usuario de la base de datos
+        echo "SQL_PASSWORD=Sanpancracio01" >> .env  # Contraseña del usuario admin
+        echo "SQL_HOST=gameshare-database.cdcck2soot42.us-east-1.rds.amazonaws.com" >> .env  # Endpoint de la base de datos Aurora
+
+    # Paso 2: Hacer login en DockerHub (usando información directa o tus credenciales)
+    - name: Docker login
+      run: |
+        docker login -u "juandzm2105" -p "Sanpancracio01-"  # Reemplaza con tu usuario y contraseña de DockerHub
+
+    # Paso 3: Construir la imagen Docker
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag juandzm2105/gameshare:latest
+
+    # Paso 4: Push de la imagen a DockerHub
+    - name: Docker Push
+      run: docker push juandzm2105/gameshare
+
