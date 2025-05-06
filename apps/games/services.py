@@ -1,4 +1,6 @@
 from typing import List, Optional
+from apps.users.models import User
+
 
 from .interfaces import (
     IGameRepository,
@@ -9,7 +11,7 @@ from .interfaces import (
     IGameRequirementsRepository,
     IGameAnalyticsRepository
 )
-from .models import Game, Category, Recommendation, Review, GameRequirements
+from .models import Game, Category, Review
 
 
 class GameService:
@@ -85,10 +87,31 @@ class RecommendationService:
     def __init__(self, recommendation_repo: IRecommendationRepository):
         self.recommendation_repo = recommendation_repo
 
-    def recommend_game(self, user_id: int, game_id: int, reason: str) -> Recommendation:
-        return self.recommendation_repo.create_recommendation(user_id, game_id, reason)
+    def recommend_based_on_hardware(self, user: User):
+        self.recommendation_repo.clear_recommendations_for_user(user.id)
 
-    def get_user_recommendations(self, user_id: int) -> List[Recommendation]:
+        for game in Game.objects.select_related('requirements').all():
+            req = game.requirements
+            reason = ""
+
+            if (
+                user.processor and req.min_processor.lower() in user.processor.lower()
+                and user.ram_gb and user.ram_gb >= req.min_ram_gb
+                and user.graphics_card and req.min_gpu.lower() in user.graphics_card.lower()
+            ):
+                reason = "Your hardware meets the minimum requirements."
+
+            if (
+                req.rec_processor and req.rec_processor.lower() in user.processor.lower()
+                and req.rec_ram_gb and user.ram_gb and user.ram_gb >= req.rec_ram_gb
+                and req.rec_gpu and req.rec_gpu.lower() in user.graphics_card.lower()
+            ):
+                reason = "Your hardware meets the recommended requirements."
+
+            if reason:
+                self.recommendation_repo.create_recommendation(user.id, game.id, reason)
+
+    def get_user_recommendations(self, user_id: int):
         return self.recommendation_repo.get_recommendations_by_user(user_id)
 
 

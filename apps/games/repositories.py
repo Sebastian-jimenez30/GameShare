@@ -1,6 +1,7 @@
 from typing import List, Optional
 from django.db.models import Avg
-from django.db.models import Count, Q
+from django.db.models import Count
+from apps.users.models import User
 
 from .models import (
     Game,
@@ -93,6 +94,16 @@ class RecommendationRepository(IRecommendationRepository):
 
     def get_recommendations_by_user(self, user_id: int) -> List[Recommendation]:
         return list(Recommendation.objects.filter(user_id=user_id))
+
+    def get_user_by_id(self, user_id: int) -> User:
+        return User.objects.get(id=user_id)
+
+    def get_all_games(self) -> List[Game]:
+        return list(Game.objects.select_related('requirements').all())
+
+    def clear_recommendations_for_user(self, user_id: int) -> None:
+        Recommendation.objects.filter(user_id=user_id).delete()
+
 
 
 class ReviewRepository(IReviewRepository):

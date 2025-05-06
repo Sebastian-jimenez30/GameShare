@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static i18n %}
+
+{% block content %}
+<div class="bg-gray-900 py-12 min-h-screen">
+  <div class="mx-auto max-w-6xl px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-gray-200 text-center mb-10">
+      {% trans "Juegos Recomendados para Ti" %}
+    </h2>
+
+    {% if recommendations %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for rec in recommendations %}
+          <div class="bg-gray-800 rounded-lg shadow-md p-4">
+            <a href="{{ rec.game.get_absolute_url }}">
+              {% if rec.game.image %}
+                <img src="{{ rec.game.image.url }}" alt="{{ rec.game.title }}" class="w-full h-48 object-cover rounded mb-3">
+              {% endif %}
+              <h3 class="text-xl font-semibold text-white mb-1">{{ rec.game.title }}</h3>
+            </a>
+            <p class="text-sm text-gray-400 mb-2">{{ rec.game.developer }}</p>
+            <p class="text-sm text-gray-300">{{ rec.reason }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-center text-gray-400 mt-12">{% trans "Aún no hay recomendaciones disponibles." %}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

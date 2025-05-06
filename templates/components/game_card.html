@@ -21,18 +21,18 @@
                 <input type="hidden" name="game_id" value="{{ game.id }}">
                 <input type="hidden" name="item_type" value="purchase"> <!-- valor por defecto -->
                 <button type="submit" class="w-full py-2 text-sm bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition">
-                Agregar al carrito
+                    {% trans "Agregar al carrito" %}
                 </button>
             </form>
 
-            {% elif actions == "library" %}
-                <button class="mt-2 text-blue-400 hover:text-blue-300">Instalar</button>
+        {% elif actions == "library" %}
+            <button class="mt-2 text-blue-400 hover:text-blue-300">Instalar</button>
 
-            {% elif actions == "shared_available" %}
-                <button class="mt-2 text-blue-400 hover:text-blue-300">Descargar</button>
-                <a class="text-sm text-purple-400 hover:text-purple-300 mt-2" href="{% url 'shared_rental_details' pk=game.id %}">
-                    Ver detalles
-                </a>
+        {% elif actions == "shared_available" %}
+            <button class="mt-2 text-blue-400 hover:text-blue-300">Descargar</button>
+            <a class="text-sm text-purple-400 hover:text-purple-300 mt-2" href="{% url 'shared_rental_details' pk=game.id %}">
+                {% trans "Ver detalles" %}
+            </a>
 
         {% elif actions == "shared_unavailable" %}
             <p class="text-red-400">{% trans "No disponible (pagos pendientes)" %}</p>
@@ -41,4 +41,19 @@
             </a>
         {% endif %}
     </div>
+
+    <!-- Acciones de administración -->
+    {% if user.is_superuser %}
+        <div class="mt-4 space-y-2 border-t border-gray-600 pt-3">
+            <a href="{% url 'game_edit' game.id %}" class="block w-full py-2 text-sm bg-yellow-600 text-white font-medium rounded-md hover:bg-yellow-700 transition text-center">
+                 {% trans "Editar" %}
+            </a>
+            <form method="post" action="{% url 'game_delete' game.id %}">
+                {% csrf_token %}
+                <button type="submit" class="w-full py-2 text-sm bg-red-600 text-white font-medium rounded-md hover:bg-red-700 transition">
+                     {% trans "Eliminar" %}
+                </button>
+            </form>
+        </div>
+    {% endif %}
 </div>
