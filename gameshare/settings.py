@@ -91,8 +91,15 @@ WSGI_APPLICATION = 'gameshare.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'gameshare',
+        'USER': 'admin',
+        'PASSWORD': 'Sanpancracio01',  # Contraseña del usuario
+        'HOST': 'gameshare-database.cdcck2soot42.us-east-1.rds.amazonaws.com',  # Endpoint de Aurora
+        'PORT': '3306',  # Puerto de MySQL
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
 

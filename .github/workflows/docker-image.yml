@@ -1,9 +1,9 @@
 name: Docker Image CI
 on:
   push:
-    branches: [main]
+    branches: [settings_db_changes]
   pull_request:
-    branches: [main]
+    branches: [settings_db_changes]
 
 jobs:
   build:
