@@ -3,25 +3,27 @@ from django.views.generic import TemplateView, DetailView, CreateView, UpdateVie
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .forms import GameForm, ReviewForm
-from .services import GameService, ReviewService
-from .repositories import GameRepository, ReviewRepository, GameCategoryRepository, GameRequirementsRepository
+from .services import GameService, ReviewService, CatalogService
+from .repositories import GameRepository, ReviewRepository, GameCategoryRepository, GameRequirementsRepository, GameAnalyticsRepository
 
 
 # Servicios
 game_service = GameService(GameRepository(), GameCategoryRepository(), GameRequirementsRepository())
 review_service = ReviewService(ReviewRepository())
+catalog_service = CatalogService(GameAnalyticsRepository()) 
 
 
 class CatalogView(LoginRequiredMixin, TemplateView):
     """
-    Muestra el catálogo de juegos disponibles.
+    Muestra el catálogo dividido en secciones: top rentas, top compras y todos los juegos.
     """
     template_name = 'games/catalog.html'
     login_url = 'user_login_form'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['games'] = game_service.list_games()
+        catalog_data = catalog_service.get_catalog_sections()
+        context.update(catalog_data)
         return context
 
 

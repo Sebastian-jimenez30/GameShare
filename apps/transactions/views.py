@@ -5,16 +5,25 @@ from django.views import View
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.utils.timezone import now
+from django.http import Http404, HttpResponse
+from decimal import Decimal
+from django.utils.timezone import now
 
 from .models import SharedRental
 from .services import TransactionService
 from .repositories import (
     RentalRepository, SharedRentalRepository,
     SharedRentalPaymentRepository, CartRepository, CartItemRepository,
-    InvoiceRepository, PaymentRepository
+    InvoiceRepository, PaymentRepository, InvoiceRepository
 )
 
+import logging
+logger = logging.getLogger(__name__)
+
 User = get_user_model()
+
+
+invoice_repo = InvoiceRepository()
 
 transaction_service = TransactionService(
     rental_repo=RentalRepository(),
@@ -63,13 +72,14 @@ class CartView(LoginRequiredMixin, TemplateView):
         cart = transaction_service.get_or_create_cart_for_user(self.request.user)
         items = cart.items.all()
 
-        # Preparamos la lista de ítems junto con su precio calculado
-        item_data = [
-            {
-                'obj': item,
-                'price': transaction_service.cart_item_repo.get_total_price(item)
-            } for item in items
-        ]
+        item_data = []
+        for item in items:
+            base_price = transaction_service.cart_item_repo.get_total_price(item)
+            if item.item_type == 'shared':
+                price = base_price
+            else:
+                price = base_price
+            item_data.append({'obj': item, 'price': price})
 
         total = sum(entry['price'] for entry in item_data)
 
@@ -93,11 +103,14 @@ class RemoveFromCartView(LoginRequiredMixin, View):
 class CheckoutCartView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         try:
-            transaction_service.checkout_cart(request.user)
-            messages.success(request, "Compra realizada exitosamente.")
+            cart_data = transaction_service.checkout_cart(request.user)
+            request.session['cart_pending'] = True  # Marcar que hay una compra en espera
+            messages.info(request, "Por favor confirma el método de pago.")
+            return redirect('billing_summary')  # o con un ID si necesitas
         except ValueError as e:
             messages.error(request, str(e))
-        return redirect('catalog')
+        return redirect('cart_view')
+
 
 class SharedRentalDetailsView(LoginRequiredMixin, DetailView):
     model = SharedRental
@@ -211,8 +224,6 @@ class RemoveSharedUserFromCartItemView(LoginRequiredMixin, View):
 
         return redirect('cart_view')
 
-import logging
-logger = logging.getLogger(__name__)
 class UpdateCartItemQuantityView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         item_id = kwargs.get('item_id')
@@ -253,3 +264,80 @@ class UpdateCartItemQuantityView(LoginRequiredMixin, View):
 
         messages.success(request, "Duración y tipo de renta actualizados correctamente.")
         return redirect('cart_view')
+
+class InvoiceDownloadView(LoginRequiredMixin, View):
+    def get(self, request, invoice_id):
+        invoice = invoice_repo.get_invoice_by_id(invoice_id)
+
+        if not invoice or invoice.user != request.user:
+            raise Http404("Factura no encontrada o acceso denegado.")
+
+        if not invoice.pdf_file:
+            # Usar el método interno del servicio
+            pdf_file = transaction_service._generate_invoice_pdf(invoice)
+            invoice.pdf_file.save(pdf_file.name, pdf_file, save=True)
+
+        response = HttpResponse(invoice.pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{invoice.pdf_file.name}"'
+        return response
+
+class BillingView(LoginRequiredMixin, TemplateView):
+    template_name = 'transactions/billing_summary.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        cart = transaction_service.get_or_create_cart_for_user(self.request.user)
+        items = cart.items.all()
+        if not items:
+            raise Http404("No hay ítems pendientes para facturar.")
+
+        total = sum(transaction_service.cart_item_repo.get_total_price(item) for item in items)
+        subtotal = (total / Decimal('1.19')).quantize(Decimal('0.01'))
+        iva = (total - subtotal).quantize(Decimal('0.01'))
+
+        context.update({
+            'items': items,
+            'total': total,
+            'subtotal': subtotal,
+            'iva': iva,
+            'payment_methods': ['card', 'paypal', 'credit'],
+            'now': now()
+        })
+        return context
+
+
+    
+class CompletePaymentView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        method = request.POST.get('method')
+
+        if not request.session.get('cart_pending'):
+            messages.error(request, "No hay una compra pendiente.")
+            return redirect('cart_view')
+
+        cart = transaction_service.get_or_create_cart_for_user(request.user)
+        items = list(cart.items.all())
+
+        invoice = transaction_service.process_checkout(request.user, items)
+        transaction_service.complete_payment(request.user, invoice.total, method)
+
+        del request.session['cart_pending']  # Limpiar la bandera
+        messages.success(request, "Pago exitoso.")
+        return redirect('invoice_success', invoice_id=invoice.id)
+
+class InvoiceSuccessView(LoginRequiredMixin, TemplateView):
+    template_name = 'transactions/invoice_success.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        invoice_id = self.kwargs.get('invoice_id')
+        invoice = invoice_repo.get_invoice_by_id(invoice_id)
+
+        if not invoice or invoice.user != self.request.user:
+            raise Http404("Factura no encontrada o acceso denegado.")
+
+        context.update({
+            'invoice': invoice
+        })
+        return context

@@ -77,7 +77,8 @@ class IReviewRepository(ABC):
         pass
 
 
-class IGameRequirementsRepository(ABC):
+class IGameRequirementsRepository(ABC): 
+
     @abstractmethod
     def create_requirements(self, requirements_data: dict) -> GameRequirements:
         pass
@@ -92,4 +93,13 @@ class IGameRequirementsRepository(ABC):
 
     @abstractmethod
     def delete_requirements(self, requirements_id: int) -> bool:
+        pass
+
+class IGameAnalyticsRepository(ABC):
+    @abstractmethod
+    def get_top_purchased_games(self, limit: int = 10) -> List[Game]:
+        pass
+
+    @abstractmethod
+    def get_top_rented_games(self, limit: int = 10) -> List[Game]:
         pass

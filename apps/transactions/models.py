@@ -33,6 +33,16 @@ class Rental(models.Model):
     end_time = models.DateTimeField()
     status = models.CharField(max_length=10, choices=[('active', 'Active'), ('finished', 'Finished')])
 
+    @property
+    def duration(self):
+        if self.rental_type == 'hourly':
+            delta = self.end_time - self.start_time
+            return int(delta.total_seconds() // 3600)
+        elif self.rental_type == 'daily':
+            delta = self.end_time.date() - self.start_time.date()
+            return delta.days
+        return 0
+
     def __str__(self):
         return f"{self.transaction.user.username} rented {self.transaction.game.title}"
 

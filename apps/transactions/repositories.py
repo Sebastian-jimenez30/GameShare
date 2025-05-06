@@ -50,21 +50,21 @@ class RentalRepository(IRentalRepository):
 
 class SharedRentalRepository(ISharedRentalRepository):
     def create_shared_rental(self, shared_rental_data: dict) -> SharedRental:
-        """
-        Crea un alquiler compartido y lo asocia con los usuarios correctos.
-        """
         users = shared_rental_data.pop("users", [])
         shared_rental = SharedRental.objects.create(**shared_rental_data)
+
+        per_user_cost = shared_rental.total_cost / len(users)
 
         for user in users:
             SharedRentalPayment.objects.create(
                 shared_rental=shared_rental,
                 user=user,
-                amount=shared_rental.game.price / len(users),
+                amount=per_user_cost,
                 status="pending"
             )
 
         return shared_rental
+
 
     def get_shared_rental_by_id(self, shared_rental_id: int) -> Optional[SharedRental]:
         return SharedRental.objects.filter(id=shared_rental_id).select_related("game").first()
@@ -111,6 +111,12 @@ class SharedRentalPaymentRepository(ISharedRentalPaymentRepository):
     def list_shared_rental_payments(self) -> List[SharedRentalPayment]:
         return list(SharedRentalPayment.objects.all())
 
+    def get_or_create_shared_rental_payment(self, shared_rental, user, defaults: dict):
+        return SharedRentalPayment.objects.get_or_create(
+            shared_rental=shared_rental,
+            user=user,
+            defaults=defaults
+        )
 
 
 class CartRepository(ICartRepository):
@@ -147,8 +153,15 @@ class CartItemRepository(ICartItemRepository):
     def get_cart_item_by_id(self, item_id: int) -> Optional[CartItem]:
         return CartItem.objects.filter(id=item_id).first()
 
-    def get_item_by_cart_and_game(self, cart: Cart, game: Game) -> Optional[CartItem]:
-        return CartItem.objects.filter(cart=cart, game=game).first()
+    def get_item_by_cart_and_game(self, cart: Cart, game: Game, item_type=None, rental_type=None, duration=None) -> Optional[CartItem]:
+        filters = {'cart': cart, 'game': game}
+        if item_type:
+            filters['item_type'] = item_type
+        if rental_type:
+            filters['rental_type'] = rental_type
+        if duration is not None:
+            filters['duration'] = duration
+        return CartItem.objects.filter(**filters).first()
 
     def delete_cart_item(self, item_id: int) -> bool:
         deleted, _ = CartItem.objects.filter(id=item_id).delete()
@@ -160,35 +173,41 @@ class CartItemRepository(ICartItemRepository):
     def update_cart_item(self, item_id: int, cart_item_data: dict) -> Optional[CartItem]:
         item = self.get_cart_item_by_id(item_id)
         if item:
-            print(f"[DEBUG] Actualizando item {item_id} con: {cart_item_data}")
             for field, value in cart_item_data.items():
                 setattr(item, field, value)
             item.save()
-            print(f"[OK] Item {item_id} actualizado.")
-        else:
-            print(f"[ERROR] No se encontró el item {item_id} para actualizar.")
         return item
 
     def get_total_price(self, item: CartItem) -> Decimal:
-        print(f"[DEBUG] Calculando total para item_id={item.id}, tipo={item.item_type}, juego={item.game.title}")
 
         if item.item_type == 'purchase':
-            total = item.game.purchase_price * item.quantity
-            print(f"[INFO] Tipo: Compra | Precio unitario: {item.game.purchase_price} | Cantidad: {item.quantity} | Total: {total}")
+            total = item.game.purchase_price
             return total
 
-        elif item.item_type == 'rental':
+        if item.item_type in ['rental', 'shared']:
             duration = item.duration or 1
-            if item.rental_type == 'hourly':
-                total = item.game.rental_price_per_hour * duration
-                print(f"[INFO] Tipo: Renta por hora | Precio por hora: {item.game.rental_price_per_hour} | Duración: {duration} | Total: {total}")
-                return total
-            elif item.rental_type == 'daily':
-                total = item.game.rental_price_per_day * duration
-                print(f"[INFO] Tipo: Renta por día | Precio por día: {item.game.rental_price_per_day} | Duración: {duration} | Total: {total}")
-                return total
+            rental_type = item.rental_type
 
-        print(f"[WARN] Tipo de item desconocido o mal configurado para item_id={item.id}")
+            if rental_type == 'hourly':
+                base_total = item.game.rental_price_per_hour * duration
+                rental_desc = "Renta por hora"
+                unit_price = item.game.rental_price_per_hour
+
+            elif rental_type == 'daily':
+                base_total = item.game.rental_price_per_day * duration
+                rental_desc = "Renta por día"
+                unit_price = item.game.rental_price_per_day
+
+            else:
+                return Decimal('0.00')
+
+            if item.item_type == 'shared':
+                num_users = item.shared_with.count() + 1  # incluye al usuario actual
+                shared_total = base_total / num_users if num_users > 0 else Decimal('0.00')
+                return shared_total
+
+            return base_total
+
         return Decimal('0.00')
 
 

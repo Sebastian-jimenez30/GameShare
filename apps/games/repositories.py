@@ -1,5 +1,6 @@
 from typing import List, Optional
 from django.db.models import Avg
+from django.db.models import Count, Q
 
 from .models import (
     Game,
@@ -15,7 +16,8 @@ from .interfaces import (
     IGameCategoryRepository,
     IRecommendationRepository,
     IReviewRepository,
-    IGameRequirementsRepository
+    IGameRequirementsRepository,
+    IGameAnalyticsRepository
 )
 
 
@@ -122,3 +124,20 @@ class GameRequirementsRepository(IGameRequirementsRepository):
 
     def get_by_id(self, requirements_id: int) -> Optional[GameRequirements]:
         return GameRequirements.objects.filter(id=requirements_id).first()
+
+class GameAnalyticsRepository(IGameAnalyticsRepository): 
+    def get_top_purchased_games(self, limit: int = 10) -> List[Game]:
+        return (
+            Game.objects.filter(transactions__transaction_type='purchase')
+            .annotate(purchase_count=Count('transactions'))
+            .order_by('-purchase_count')[:limit]
+        )
+
+    def get_top_rented_games(self, limit: int = 10) -> List[Game]:
+        return (
+            Game.objects.filter(
+                transactions__transaction_type__in=['rental', 'shared_rental']
+            )
+            .annotate(rental_count=Count('transactions'))
+            .order_by('-rental_count')[:limit]
+        )

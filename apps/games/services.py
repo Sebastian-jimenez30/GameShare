@@ -6,7 +6,8 @@ from .interfaces import (
     IGameCategoryRepository,
     IRecommendationRepository,
     IReviewRepository,
-    IGameRequirementsRepository
+    IGameRequirementsRepository,
+    IGameAnalyticsRepository
 )
 from .models import Game, Category, Recommendation, Review, GameRequirements
 
@@ -103,3 +104,15 @@ class ReviewService:
 
     def get_game_rating(self, game_id: int) -> float:
         return self.review_repo.get_average_rating(game_id)
+
+
+class CatalogService:
+    def __init__(self, analytics_repo: IGameAnalyticsRepository):
+        self.analytics_repo = analytics_repo
+
+    def get_catalog_sections(self) -> dict:
+        return {
+            'top_rented_games': self.analytics_repo.get_top_rented_games(),
+            'top_purchased_games': self.analytics_repo.get_top_purchased_games(),
+            'all_games': Game.objects.filter(available=True)
+        }

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<section class="bg-gray-900 py-12 antialiased md:py-16">
+  <div class="mx-auto max-w-2xl space-y-6 px-6 sm:px-8 lg:px-0">
+    <div class="space-y-6 rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-sm text-center">
+
+      <h2 class="text-2xl font-bold text-white">{% trans "¡Pago Exitoso!" %}</h2>
+
+      <p class="text-gray-300">{% trans "Tu factura electrónica ha sido generada." %}</p>
+
+      <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mt-6">
+        <a href="{% url 'download_invoice' invoice.id %}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg">
+          {% trans "Descargar Factura PDF" %}
+        </a>
+        <a href="{% url 'user_library' %}" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg">
+          {% trans "Ir a mi biblioteca" %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}

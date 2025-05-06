@@ -1,10 +1,10 @@
 from .models import User
 from .interfaces import IUserRepository, IUserLibraryRepository, IUserSearchRepository
 from django.contrib.auth import authenticate
-from apps.games.models import Game
-from apps.transactions.models import Transaction, Rental, SharedRental, SharedRentalPayment
+from apps.transactions.models import Transaction, SharedRentalPayment
 from django.db.models import Q
 from typing import List
+from django.utils.timezone import now
 
 
 class UserRepository(IUserRepository):
@@ -39,21 +39,32 @@ class UserLibraryRepository(IUserLibraryRepository):
         return [t.game for t in purchases]
 
     def get_rented_games(self, user):
-        rentals = Transaction.objects.filter(
-            user=user, transaction_type='rental'
-        ).select_related('game')
-        return [t.game for t in rentals]
+        from apps.transactions.models import Rental
 
+        active_rentals = Rental.objects.filter(
+            transaction__user=user,
+            transaction__transaction_type='rental',
+            end_time__gt=now()
+        ).select_related('transaction__game')
+
+        return [r.transaction.game for r in active_rentals]
+    
     def get_shared_rentals(self, user):
-        shared_payments = SharedRentalPayment.objects.filter(user=user).select_related('shared_rental__game')
-        
+        from django.utils.timezone import now
+
+        shared_payments = SharedRentalPayment.objects.filter(
+            user=user
+        ).select_related('shared_rental__game')
+
         available_shared_rentals = []
         unavailable_shared_rentals = []
 
         for payment in shared_payments:
             shared_rental = payment.shared_rental
-            payments = shared_rental.payments.all()
+            if shared_rental.end_time <= now():
+                continue  # saltar si ya venció
 
+            payments = shared_rental.payments.all()
             all_paid = all(p.status == 'completed' for p in payments)
 
             if all_paid:

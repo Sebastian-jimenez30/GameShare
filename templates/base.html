@@ -25,7 +25,7 @@
                 <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
                     {% if user.is_authenticated %}
                         <span class="text-gray-200 font-medium hidden md:inline mr-4">
-                            {% blocktrans %}Hola, <strong>{{ user.username }}</strong>{% endblocktrans %}
+                            Hola, <strong>{{ user.username }}</strong>
                         </span>
                         <form method="post" action="{% url 'logout' %}">
                             {% csrf_token %}
@@ -86,6 +86,8 @@
         <div class="container mx-auto mt-6 p-6 bg-gray-900 shadow-md rounded-lg">
             {% block content %}{% endblock %}
         </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
 
     </body>
 </html>

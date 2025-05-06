@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<section class="bg-gray-900 py-12 antialiased md:py-16">
+  <div class="mx-auto max-w-2xl space-y-6 px-6 sm:px-8 lg:px-0">
+    <div class="space-y-6 rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-sm">
+
+      <h2 class="text-2xl font-bold text-white text-center">
+        {% trans "Factura Electrónica (Vista previa)" %}
+      </h2>
+
+      <div class="space-y-2 text-gray-300 text-sm">
+        <p><strong>{% trans "Usuario" %}:</strong> {{ request.user.full_name }} ({{ request.user.username }})</p>
+        <p><strong>{% trans "Fecha de Emisión" %}:</strong> {{ now|date:"d/m/Y H:i" }}</p>
+      </div>
+
+      <hr class="border-gray-700">
+
+      {% for item in items %}
+        <div class="space-y-2 text-gray-300 text-sm border-t border-gray-700 pt-4">
+          <p class="font-semibold text-gray-200">{% trans "Detalle del Producto" %}</p>
+          <p><strong>{% trans "Juego" %}:</strong> {{ item.game.title }}</p>
+          <p><strong>{% trans "Tipo de Transacción" %}:</strong> {{ item.item_type }}</p>
+          {% if item.item_type in "rental shared" %}
+            <p><strong>{% trans "Duración" %}:</strong> {{ item.duration }} {% trans "unidades" %}</p>
+            <p><strong>{% trans "Tipo de Renta" %}:</strong> {{ item.rental_type }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <hr class="border-gray-700">
+
+      <div class="space-y-1 text-gray-300 text-sm">
+        <p><strong>{% trans "Subtotal" %}:</strong> ${{ subtotal }}</p>
+        <p><strong>{% trans "IVA (19%)" %}:</strong> ${{ iva }}</p>
+        <p class="text-lg font-semibold text-white mt-2"><strong>{% trans "Total a Pagar" %}:</strong> ${{ total }}</p>
+      </div>
+
+      <form method="post" action="{% url 'complete_payment' %}" class="space-y-4">
+        {% csrf_token %}
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">{% trans "Método de Pago" %}</label>
+          <select name="method" class="bg-black text-white px-4 py-2 rounded-md w-full border border-gray-600">
+              {% for method in payment_methods %}
+                  <option value="{{ method }}">{{ method|title }}</option>
+              {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" class="w-full px-5 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700">
+          {% trans "Confirmar y Pagar" %}
+        </button>
+      </form>
+
+      <div class="text-center">
+        <a href="{% url 'cart_view'%}" class="underline text-blue-400 hover:text-blue-300">
+          {% trans "Cancelar" %}
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
