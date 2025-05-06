@@ -1,5 +1,6 @@
 from django.db import models
 from apps.users.models import User
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -38,11 +39,15 @@ class Game(models.Model):
 
     categories = models.ManyToManyField(Category, through='GameCategory', related_name='games')
 
+    def get_absolute_url(self):
+        return reverse('game_detail', args=[str(self.id)])
+
     def __str__(self):
         return self.title
 
     def check_availability(self):
         return self.available
+    
 
 
 class GameCategory(models.Model):

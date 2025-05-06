@@ -4,98 +4,71 @@
 {% block content %}
 <div class="bg-gray-900 py-12">
   <div class="mx-auto max-w-7xl px-6 lg:px-8">
-    <h2 class="text-3xl font-bold tracking-tight text-gray-200 text-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-200 text-center mb-12">
       {% trans "Catálogo de Juegos" %}
     </h2>
 
     {% if user.is_superuser %}
-      <div class="text-right mb-6">
+      <div class="text-right mb-8">
         <a href="{% url 'game_create' %}" class="text-white bg-purple-600 hover:bg-purple-700 py-2 px-6 rounded-md text-sm">
           {% trans "Agregar Juego" %}
         </a>
       </div>
     {% endif %}
 
-    <div class="relative overflow-hidden">
-      <button id="prevButton"
-              aria-label="Juegos anteriores"
-              class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 z-10">
-        &lt;
-      </button>
-      <button id="nextButton"
-              aria-label="Juegos siguientes"
-              class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full shadow-lg hover:bg-gray-700 z-10">
-        &gt;
-      </button>
-
-      <div id="carousel" class="flex space-x-6 overflow-x-auto scroll-smooth scrollbar-hide">
-        {% for game in games %}
-          <div class="bg-gray-800 p-4 shadow-lg rounded-lg min-w-[250px] max-w-[250px] hover:shadow-xl transition flex-shrink-0">
-            <a href="{% url 'game_detail' game.id %}" class="block">
-              {% if game.image %}
-                <img src="{{ game.image.url }}" alt="{{ game.title }}" class="w-full h-48 object-cover rounded-md mb-3">
-              {% else %}
-                <div class="w-full h-48 bg-gray-700 rounded-md flex items-center justify-center">
-                  <span class="text-gray-400">{% trans "Sin imagen" %}</span>
-                </div>
-              {% endif %}
-              <h3 class="text-lg font-semibold text-gray-200">{{ game.title }}</h3>
-              <p class="text-sm text-gray-400">{{ game.developer }}</p>
-            </a>
-
-            <div class="mt-2 text-sm text-gray-400">
-              <p>Compra: ${{ game.purchase_price }}</p>
-              <p>Renta/hora: ${{ game.rental_price_per_hour }}</p>
-              <p>Renta/día: ${{ game.rental_price_per_day }}</p>
+    <!-- 🎮 Top Rentados con desplazamiento continuo -->
+    {% if top_rented_games %}
+    <div class="mb-20">
+      <h3 class="text-2xl font-semibold text-gray-300 mb-4">{% trans "Top Rentados" %}</h3>
+      <div class="relative overflow-hidden h-[360px]">
+        <div id="rented-carousel" class="flex gap-6 w-max animate-rent-loop">
+          {% for game in top_rented_games %}
+            <div class="min-w-[300px]">
+              {% include "components/game_card.html" with game=game game_url=game.get_absolute_url actions="catalog" %}
             </div>
-
-            <div class="mt-4 space-y-2">
-
-                <form action="{% url 'add_to_cart' %}" method="post">
-                  {% csrf_token %}
-                  <input type="hidden" name="game_id" value="{{ game.id }}">
-                  <input type="hidden" name="item_type" value="purchase"> <!-- valor por defecto -->
-                  <button type="submit"
-                          class="w-full py-2 text-sm bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition">
-                    Agregar al carrito
-                  </button>
-                </form>
-
-              {% if user.is_superuser %}
-                <div class="mt-4 flex justify-between space-x-2">
-                  <a href="{% url 'game_edit' game.id %}"
-                     class="w-1/2 py-2 text-sm bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 transition">
-                    Editar
-                  </a>
-                  <form action="{% url 'game_delete' game.id %}" method="post" class="w-1/2">
-                    {% csrf_token %}
-                    <button type="submit" class="py-2 text-sm bg-red-600 text-white font-medium rounded-md hover:bg-red-700 transition">
-                      {% trans "Eliminar" %}
-                    </button>
-                  </form>
-                </div>
-              {% endif %}
+          {% endfor %}
+          {% for game in top_rented_games %}
+            <div class="min-w-[300px]">
+              {% include "components/game_card.html" with game=game game_url=game.get_absolute_url actions="catalog" %}
             </div>
-          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 🛒 Top Comprados con desplazamiento continuo -->
+    {% if top_purchased_games %}
+    <div class="mb-20">
+      <h3 class="text-2xl font-semibold text-gray-300 mb-4">{% trans "Top Comprados" %}</h3>
+      <div class="relative overflow-hidden h-[360px]">
+        <div id="purchased-carousel" class="flex gap-6 w-max animate-purchase-loop">
+          {% for game in top_purchased_games %}
+            <div class="min-w-[300px]">
+              {% include "components/game_card.html" with game=game game_url=game.get_absolute_url actions="catalog" %}
+            </div>
+          {% endfor %}
+          {% for game in top_purchased_games %}
+            <div class="min-w-[300px]">
+              {% include "components/game_card.html" with game=game game_url=game.get_absolute_url actions="catalog" %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- 📚 Todos los juegos -->
+    <div>
+      <h3 class="text-2xl font-semibold text-gray-300 mb-6">{% trans "Todos los Juegos" %}</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {% for game in all_games %}
+          {% include "components/game_card.html" with game=game game_url=game.get_absolute_url actions="catalog" %}
         {% empty %}
-          <p class="text-center text-gray-400 text-lg">{% trans "No hay juegos disponibles." %}</p>
+          <p class="text-gray-400 col-span-full text-center">{% trans "No hay juegos disponibles." %}</p>
         {% endfor %}
       </div>
     </div>
   </div>
 </div>
-
-<script>
-  const carousel = document.getElementById('carousel');
-  const prevButton = document.getElementById('prevButton');
-  const nextButton = document.getElementById('nextButton');
-
-  nextButton.addEventListener('click', () => {
-    carousel.scrollBy({ left: 300, behavior: 'smooth' });
-  });
-
-  prevButton.addEventListener('click', () => {
-    carousel.scrollBy({ left: -300, behavior: 'smooth' });
-  });
-</script>
 {% endblock %}

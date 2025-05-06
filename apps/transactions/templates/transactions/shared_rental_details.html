@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
-
+{% load i18n %}
 {% block content %}
 <section class="bg-gray-900 py-12 antialiased md:py-16">
   <div class="mx-auto max-w-screen-xl px-6 2xl:px-0">
-<<<<<<< HEAD
     <h2 class="text-3xl font-bold tracking-tight text-gray-200 sm:text-4xl mb-4">Detalles de Renta Compartida</h2>
 
     <!-- Info general -->
@@ -21,14 +20,6 @@
       <!-- Usuarios que han pagado -->
       <div class="rounded-lg border border-green-500 bg-gray-800 p-6 shadow-sm">
         <h3 class="text-2xl font-semibold text-green-400">Usuarios que han pagado</h3>
-=======
-    <h2 class="text-3xl font-bold tracking-tight text-gray-200 sm:text-4xl">{% trans "Detalles de Renta Compartida" %}</h2>
-
-    <div class="mt-6 space-y-8">
-      <!-- Usuarios que han pagado -->
-      <div class="rounded-lg border border-gray-700 bg-gray-800 p-6 shadow-sm">
-        <h3 class="text-2xl font-semibold text-gray-200">{% trans "Usuarios que han pagado" %}</h3>
->>>>>>> origin/main
         <ul class="mt-4 space-y-2">
           {% for payment in paid_users %}
             <li class="text-gray-300 flex justify-between border-b border-gray-700 pb-2">

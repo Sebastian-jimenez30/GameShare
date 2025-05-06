@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from django.http import Http404, HttpResponse
 from decimal import Decimal
+from django.utils.timezone import now
 
 from .models import SharedRental
 from .services import TransactionService
@@ -300,7 +301,8 @@ class BillingView(LoginRequiredMixin, TemplateView):
             'total': total,
             'subtotal': subtotal,
             'iva': iva,
-            'payment_methods': ['card', 'paypal', 'credit']
+            'payment_methods': ['card', 'paypal', 'credit'],
+            'now': now()
         })
         return context
 
@@ -322,4 +324,20 @@ class CompletePaymentView(LoginRequiredMixin, View):
 
         del request.session['cart_pending']  # Limpiar la bandera
         messages.success(request, "Pago exitoso.")
-        return redirect('download_invoice', invoice_id=invoice.id)
+        return redirect('invoice_success', invoice_id=invoice.id)
+
+class InvoiceSuccessView(LoginRequiredMixin, TemplateView):
+    template_name = 'transactions/invoice_success.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        invoice_id = self.kwargs.get('invoice_id')
+        invoice = invoice_repo.get_invoice_by_id(invoice_id)
+
+        if not invoice or invoice.user != self.request.user:
+            raise Http404("Factura no encontrada o acceso denegado.")
+
+        context.update({
+            'invoice': invoice
+        })
+        return context

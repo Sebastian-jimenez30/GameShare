@@ -3,7 +3,7 @@ from apps.transactions.views import (
     AddToCartView, CartView, RemoveFromCartView, UpdateCartItemTypeView, 
     CheckoutCartView, UpdateCartItemSharedUsersView, 
     RemoveSharedUserFromCartItemView, SharedRentalDetailsView, CompleteSharedPaymentView, UpdateCartItemQuantityView,
-    InvoiceDownloadView, BillingView, CompletePaymentView
+    InvoiceDownloadView, BillingView, CompletePaymentView, InvoiceSuccessView
 )
 
 urlpatterns = [
@@ -22,5 +22,7 @@ urlpatterns = [
     path('payments/invoice/<int:invoice_id>/', InvoiceDownloadView.as_view(), name='download_invoice'),
     path('cart/billing/', BillingView.as_view(), name='billing_summary'),
     path('cart/payment/', CompletePaymentView.as_view(), name='complete_payment'),
+    path('payments/invoice/<int:invoice_id>/success/', InvoiceSuccessView.as_view(), name='invoice_success'),
+
 
 ]

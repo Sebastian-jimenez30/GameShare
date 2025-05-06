@@ -153,8 +153,15 @@ class CartItemRepository(ICartItemRepository):
     def get_cart_item_by_id(self, item_id: int) -> Optional[CartItem]:
         return CartItem.objects.filter(id=item_id).first()
 
-    def get_item_by_cart_and_game(self, cart: Cart, game: Game) -> Optional[CartItem]:
-        return CartItem.objects.filter(cart=cart, game=game).first()
+    def get_item_by_cart_and_game(self, cart: Cart, game: Game, item_type=None, rental_type=None, duration=None) -> Optional[CartItem]:
+        filters = {'cart': cart, 'game': game}
+        if item_type:
+            filters['item_type'] = item_type
+        if rental_type:
+            filters['rental_type'] = rental_type
+        if duration is not None:
+            filters['duration'] = duration
+        return CartItem.objects.filter(**filters).first()
 
     def delete_cart_item(self, item_id: int) -> bool:
         deleted, _ = CartItem.objects.filter(id=item_id).delete()
@@ -166,21 +173,15 @@ class CartItemRepository(ICartItemRepository):
     def update_cart_item(self, item_id: int, cart_item_data: dict) -> Optional[CartItem]:
         item = self.get_cart_item_by_id(item_id)
         if item:
-            print(f"[DEBUG] Actualizando item {item_id} con: {cart_item_data}")
             for field, value in cart_item_data.items():
                 setattr(item, field, value)
             item.save()
-            print(f"[OK] Item {item_id} actualizado.")
-        else:
-            print(f"[ERROR] No se encontró el item {item_id} para actualizar.")
         return item
 
     def get_total_price(self, item: CartItem) -> Decimal:
-        print(f"[DEBUG] Calculando total para item_id={item.id}, tipo={item.item_type}, juego={item.game.title}")
 
         if item.item_type == 'purchase':
-            total = item.game.purchase_price * item.quantity
-            print(f"[INFO] Tipo: Compra | Precio unitario: {item.game.purchase_price} | Cantidad: {item.quantity} | Total: {total}")
+            total = item.game.purchase_price
             return total
 
         if item.item_type in ['rental', 'shared']:
@@ -198,19 +199,15 @@ class CartItemRepository(ICartItemRepository):
                 unit_price = item.game.rental_price_per_day
 
             else:
-                print(f"[WARN] rental_type no definido para item_id={item.id}")
                 return Decimal('0.00')
 
             if item.item_type == 'shared':
                 num_users = item.shared_with.count() + 1  # incluye al usuario actual
                 shared_total = base_total / num_users if num_users > 0 else Decimal('0.00')
-                print(f"[INFO] Tipo: {rental_desc} compartida | Precio unitario: {unit_price} | Duración: {duration} | Usuarios: {num_users} | Total dividido: {shared_total}")
                 return shared_total
 
-            print(f"[INFO] Tipo: {rental_desc} | Precio unitario: {unit_price} | Duración: {duration} | Total: {base_total}")
             return base_total
 
-        print(f"[WARN] Tipo de item desconocido o mal configurado para item_id={item.id}")
         return Decimal('0.00')
 
 

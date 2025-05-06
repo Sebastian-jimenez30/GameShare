@@ -114,35 +114,41 @@ class TransactionService:
         user_id: int,
         game_id: int,
         item_type: str,
-        quantity: int = 1,
+        quantity: int = 1,  # no se usará realmente
         rental_type: str = None,
         duration: int = None
     ):
         user = User.objects.get(id=user_id)
         game = Game.objects.get(id=game_id)
 
+        # Verificar si ya lo compró (no permitir duplicados)
         if item_type == 'purchase' and Transaction.objects.filter(user=user, game=game, transaction_type='purchase').exists():
             raise ValueError("El juego ya fue comprado.")
 
         cart = self.get_or_create_cart_for_user(user)
-        existing_item = self.cart_item_repo.get_item_by_cart_and_game(cart, game)
+
+        # Buscar ítem similar (misma configuración)
+        existing_item = self.cart_item_repo.get_item_by_cart_and_game(
+            cart=cart,
+            game=game,
+            item_type=item_type,
+            rental_type=rental_type,
+            duration=duration
+        )
 
         if existing_item:
-            existing_item.quantity += quantity
-            if rental_type:
-                existing_item.rental_type = rental_type
-            if duration:
-                existing_item.duration = duration
-            existing_item.save()
+            # Ya existe un ítem exactamente igual, no agregamos de nuevo
+            raise ValueError("Este juego ya está en el carrito con esa configuración.")
         else:
             self.cart_item_repo.create_cart_item({
                 'cart': cart,
                 'game': game,
                 'item_type': item_type,
-                'quantity': quantity,
+                'quantity': 1,  # SIEMPRE 1
                 'rental_type': rental_type,
                 'duration': duration
             })
+
 
     def remove_item_from_cart(self, cart_item_id: int):
         item = self.cart_item_repo.get_cart_item_by_id(cart_item_id)
