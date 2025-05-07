@@ -23,7 +23,7 @@ RUN pip install -r requirements.txt
 COPY . /code
 
 # Expone el puerto por donde correrá el servidor
-EXPOSE 8000
+EXPOSE 80
 
 # Comando por defecto para desarrollo
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:80"]
