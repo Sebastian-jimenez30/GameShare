@@ -1,0 +1,5 @@
+services:
+  web:
+    env_file:
+      - .env.prod
+    depends_on: []  # no usamos contenedor db

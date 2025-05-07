@@ -1,9 +1,7 @@
-# Usa una imagen base de Python 3.11 con herramientas mínimas
-FROM python:3.11-slim
+FROM python:3.11
 
 # Evita que Python guarde archivos .pyc y loguee en buffer
-ENV PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+ENV PYTHONUNBUFFERED=1
 
 # Establece el directorio de trabajo
 WORKDIR /code
@@ -22,8 +20,7 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-# Copia el resto del código al contenedor
-COPY . .
+COPY . /code
 
 # Expone el puerto por donde correrá el servidor
 EXPOSE 8000

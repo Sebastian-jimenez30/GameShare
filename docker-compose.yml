@@ -1,28 +1,19 @@
 version: '3.9'
 
 services:
-  db:
-    image: mysql:8
-    container_name: db
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_DATABASE: gameshare
-      MYSQL_USER: root
-      MYSQL_PASSWORD: Sanpancracio01
-      MYSQL_ROOT_PASSWORD: Sanpancracio01
-    volumes:
-      - ./db:/var/lib/mysql
-
   web:
     build: .
-    container_name: gameshare-docker
-    command: python manage.py runserver 0.0.0.0:8000
+    container_name: gameshare-app
+    command: >
+      sh -c "python wait_for_db.py &&
+             python manage.py makemigrations &&
+             python manage.py migrate &&
+             gunicorn gameshare.wsgi:application --bind 0.0.0.0:8000"
     ports:
       - "8000:8000"
     volumes:
       - .:/code
-    depends_on:
-      - db
     env_file:
       - .env
+    depends_on:
+      - db
