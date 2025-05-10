@@ -5,7 +5,10 @@ from django.urls import reverse_lazy
 from .forms import GameForm, ReviewForm
 from .services import GameService, ReviewService, CatalogService, RecommendationService
 from .repositories import GameRepository, ReviewRepository, GameCategoryRepository, GameRequirementsRepository, GameAnalyticsRepository, RecommendationRepository
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from .models import Game
+from .serializers import GameSerializer
 
 # Servicios
 game_service = GameService(GameRepository(), GameCategoryRepository(), GameRequirementsRepository())
@@ -180,3 +183,9 @@ class RecommendationListView(LoginRequiredMixin, TemplateView):
         service.recommend_based_on_hardware(self.request.user)
         context['recommendations'] = service.get_user_recommendations(self.request.user.id)
         return context
+
+class AvailableGamesAPIView(APIView):
+    def get(self, request):
+        games = Game.objects.filter(available=True)
+        serializer = GameSerializer(games, many=True, context={'request': request})
+        return Response(serializer.data)

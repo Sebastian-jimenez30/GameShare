@@ -7,6 +7,7 @@ from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
+from apps.games.views import AvailableGamesAPIView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -24,6 +25,9 @@ schema_view = get_schema_view(
 urlpatterns = [
     # Ruta para cambiar el idioma con POST (opcional si usas select de idiomas)
     path('i18n/', include('django.conf.urls.i18n')),
+
+    # Servicio web
+    path('api/games/', AvailableGamesAPIView.as_view(), name='api_available_games'),
 ]
 
 urlpatterns += i18n_patterns(

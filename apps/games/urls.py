@@ -7,5 +7,5 @@ urlpatterns = [
     path('game/create/', GameCreateView.as_view(), name='game_create'),
     path('game/<int:pk>/edit/', GameEditView.as_view(), name='game_edit'),
     path('game/<int:pk>/delete/', GameDeleteView.as_view(), name='game_delete'),
-    path("recommendations/", RecommendationListView.as_view(), name="recommendations")
+    path("recommendations/", RecommendationListView.as_view(), name="recommendations"),
 ]
