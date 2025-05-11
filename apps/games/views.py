@@ -3,7 +3,7 @@ from django.views.generic import TemplateView, DetailView, CreateView, UpdateVie
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .forms import GameForm, ReviewForm
-from .services import GameService, ReviewService, CatalogService, RecommendationService
+from .services import GameService, ReviewService, CatalogService, RecommendationService, LocationService
 from .repositories import GameRepository, ReviewRepository, GameCategoryRepository, GameRequirementsRepository, GameAnalyticsRepository, RecommendationRepository
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -27,6 +27,7 @@ class CatalogView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         catalog_data = catalog_service.get_catalog_sections()
         context.update(catalog_data)
+        context.update(LocationService.get_user_location())
         return context
 
 
@@ -107,8 +108,6 @@ class GameCreateView(UserPassesTestMixin, CreateView):
             requirements_data=requirements_data
         )
         return redirect(self.success_url)
-
-
 
 class GameEditView(UserPassesTestMixin, UpdateView):
     form_class = GameForm

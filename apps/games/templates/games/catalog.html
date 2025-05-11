@@ -7,6 +7,9 @@
     <h2 class="text-3xl font-bold text-gray-200 text-center mb-12">
       {% trans "Catálogo de Juegos" %}
     </h2>
+    <p class="text-sm text-gray-400 text-center mb-10">
+      🌍 Hola desde {{ city }}, {{ country }}
+    </p>
 
     {% if user.is_superuser %}
       <div class="text-right mb-8">

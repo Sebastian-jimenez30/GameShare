@@ -1,5 +1,6 @@
 from typing import List, Optional
 from apps.users.models import User
+import requests
 
 
 from .interfaces import (
@@ -138,4 +139,22 @@ class CatalogService:
             'top_rented_games': self.analytics_repo.get_top_rented_games(),
             'top_purchased_games': self.analytics_repo.get_top_purchased_games(),
             'all_games': Game.objects.filter(available=True)
+        }
+
+class LocationService:
+    @staticmethod
+    def get_user_location() -> dict:
+        try:
+            response = requests.get('https://ipapi.co/json/')
+            if response.status_code == 200:
+                data = response.json()
+                return {
+                    'city': data.get('city', 'tu ciudad'),
+                    'country': data.get('country_name', 'tu país')
+                }
+        except:
+            pass
+        return {
+            'city': 'tu ciudad',
+            'country': 'tu país'
         }
