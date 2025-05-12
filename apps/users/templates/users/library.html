@@ -41,10 +41,10 @@
 
     <!-- Juegos Rentados Compartidos -->
     <div class="category-section" data-category="rentados_compartidos">
-      <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">Juegos Rentados Compartidos</h3>
+      <h3 class="text-2xl font-semibold text-gray-300 mb-6 border-b border-gray-700 pb-2">{% trans "Juegos Rentados Compartidos" %}</h3>
 
       {% if available_shared_rentals %}
-        <h4 class="text-lg font-semibold text-green-400 mb-2">Disponibles</h4>
+        <h4 class="text-lg font-semibold text-green-400 mb-2">{% trans "Disponibles" %} </h4>
         <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide mb-6">
           {% for shared_rental in available_shared_rentals %}
             {% include "components/game_card.html" with game=shared_rental.game game_url="#" actions="shared_available" %}
@@ -53,7 +53,7 @@
       {% endif %}
 
       {% if unavailable_shared_rentals %}
-        <h4 class="text-lg font-semibold text-yellow-400 mb-2">Pendientes de pago</h4>
+        <h4 class="text-lg font-semibold text-yellow-400 mb-2">{% trans "Pendientes de pago" }</h4>
         <div class="flex space-x-6 overflow-x-auto whitespace-nowrap scrollbar-hide">
           {% for shared_rental in unavailable_shared_rentals %}
             {% include "components/game_card.html" with game=shared_rental.game game_url="#" actions="shared_unavailable" %}
@@ -62,7 +62,7 @@
       {% endif %}
 
       {% if available_shared_rentals|length == 0 and unavailable_shared_rentals|length == 0 %}
-        <p class="text-center text-gray-400 text-lg">No tienes juegos rentados compartidos aún.</p>
+        <p class="text-center text-gray-400 text-lg">{% trans "No tienes juegos rentados compartidos aún." %}</p>
       {% endif %}
     </div>
   </div>
