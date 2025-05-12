@@ -3,7 +3,7 @@ from django.views.generic import TemplateView, DetailView, CreateView, UpdateVie
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .forms import GameForm, ReviewForm
-from .services import GameService, ReviewService, CatalogService, RecommendationService, LocationService
+from .services import GameService, ReviewService, CatalogService, RecommendationService, LocationService, CryptoService
 from .repositories import GameRepository, ReviewRepository, GameCategoryRepository, GameRequirementsRepository, GameAnalyticsRepository, RecommendationRepository
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -45,9 +45,16 @@ class GameDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         game = self.get_object()
-        context['reviews'] = review_service.get_reviews_for_game(game.id)
-        context['review_form'] = ReviewForm()
-        context['categories'] = game.categories.all()
+        
+        crypto_prices = CryptoService.convert_usd_to_crypto(float(game.purchase_price))
+    
+        context.update({
+            'reviews': review_service.get_reviews_for_game(game.id),
+            'review_form': ReviewForm(),
+            'categories': game.categories.all(),
+            'btc_price': crypto_prices['btc'],
+            'eth_price': crypto_prices['eth'],
+        })
         return context
 
     def post(self, request, *args, **kwargs):

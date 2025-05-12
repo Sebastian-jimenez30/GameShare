@@ -140,7 +140,6 @@ class CatalogService:
             'top_purchased_games': self.analytics_repo.get_top_purchased_games(),
             'all_games': Game.objects.filter(available=True)
         }
-
 class LocationService:
     @staticmethod
     def get_user_location() -> dict:
@@ -155,6 +154,31 @@ class LocationService:
         except:
             pass
         return {
-            'city': 'tu ciudad',
+            'city': 'tu ciuda',
             'country': 'tu país'
         }
+
+class CryptoService:
+    @staticmethod
+    def convert_usd_to_crypto(usd_amount: float) -> dict:
+        try:
+            url = "https://api.coingecko.com/api/v3/simple/price"
+            params = {
+                'ids': 'bitcoin,ethereum',
+                'vs_currencies': 'usd'
+            }
+            response = requests.get(url, params=params, timeout=5)
+            data = response.json()
+
+            btc_usd = data['bitcoin']['usd']
+            eth_usd = data['ethereum']['usd']
+
+            return {
+                'btc': round(usd_amount / btc_usd, 6),
+                'eth': round(usd_amount / eth_usd, 6),
+            }
+        except:
+            return {
+                'btc': None,
+                'eth': None,
+            }

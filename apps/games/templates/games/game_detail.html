@@ -19,7 +19,14 @@
     <div>
       <p class="text-lg"><strong class="text-purple-400">Desarrollador:</strong> {{ game.developer }}</p>
       <p class="text-lg"><strong class="text-purple-400">Año de lanzamiento:</strong> {{ game.release_year }}</p>
-      <p class="text-lg"><strong class="text-purple-400">Precio de compra:</strong> ${{ game.purchase_price }}</p>
+      <p class="text-lg">
+        <strong class="text-purple-400">Precio de compra:</strong> ${{ game.purchase_price }}
+        {% if btc_price and eth_price %}
+        <span class="text-sm text-gray-400 block mt-1">
+          (~ {{ btc_price }} BTC • {{ eth_price }} ETH)
+        </span>
+      {% endif %}
+      </p>
       <p class="text-lg"><strong class="text-purple-400">Renta por hora:</strong> ${{ game.rental_price_per_hour }}</p>
       <p class="text-lg"><strong class="text-purple-400">Renta por día:</strong> ${{ game.rental_price_per_day }}</p>
       <p class="text-lg"><strong class="text-purple-400">Disponible:</strong> 
