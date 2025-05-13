@@ -92,16 +92,16 @@ WSGI_APPLICATION = 'gameshare.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'gameshare'),
-        'USER': os.getenv('DB_USER', 'admin'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'Sanpancracio01'),
-        'HOST': os.getenv('DB_HOST', 'gameshare-database.cdcck2soot42.us-east-1.rds.amazonaws.com'),
-        'PORT': os.getenv('DB_PORT', '3306'),
+        #'ENGINE': 'django.db.backends.mysql',
+        #'NAME': os.getenv('DB_NAME', 'gameshare'),
+        #'USER': os.getenv('DB_USER', 'admin'),
+        #'PASSWORD': os.getenv('DB_PASSWORD', 'Sanpancracio01'),
+        #'HOST': os.getenv('DB_HOST', 'gameshare-database.cdcck2soot42.us-east-1.rds.amazonaws.com'),
+        #'PORT': os.getenv('DB_PORT', '3306'),
 
         #Usar estas dos lineas si no tiene configurado el sql
-        #'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

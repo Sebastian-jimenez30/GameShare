@@ -19,76 +19,76 @@
     <div class="space-y-4 text-gray-200">
       <!-- Campos básicos -->
       <div>
-        <label for="id_title" class="block text-sm font-medium mb-1">Título</label>
+        <label for="id_title" class="block text-sm font-medium mb-1">{% trans "Título" %}</label>
         {{ form.title|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
       </div>
 
       <div>
-        <label for="id_developer" class="block text-sm font-medium mb-1">Desarrollador</label>
+        <label for="id_developer" class="block text-sm font-medium mb-1">{% trans "Desarrollador" %}</label>
         {{ form.developer|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
       </div>
 
       <div>
-        <label for="id_release_year" class="block text-sm font-medium mb-1">Año de Lanzamiento</label>
+        <label for="id_release_year" class="block text-sm font-medium mb-1">{% trans "Año de Lanzamiento" %}</label>
         {{ form.release_year|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
       </div>
 
       <div>
-        <label for="id_purchase_price" class="block text-sm font-medium mb-1">Precio de Compra</label>
+        <label for="id_purchase_price" class="block text-sm font-medium mb-1">{% trans "Precio de Compra" %}</label>
         {{ form.purchase_price|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
       </div>
 
       <div>
-        <label for="id_rental_price_per_hour" class="block text-sm font-medium mb-1">Renta por Hora</label>
+        <label for="id_rental_price_per_hour" class="block text-sm font-medium mb-1">{% trans "Renta por Hora" %}</label>
         {{ form.rental_price_per_hour|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
       </div>
 
       <div>
-        <label for="id_rental_price_per_day" class="block text-sm font-medium mb-1">Renta por Día</label>
+        <label for="id_rental_price_per_day" class="block text-sm font-medium mb-1">{% trans "Renta por Día" %}</label>
         {{ form.rental_price_per_day|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100 focus:ring-2 focus:ring-purple-500" }}
       </div>
 
       <!-- Requisitos Mínimos -->
-      <h3 class="text-xl font-semibold mt-6 text-purple-400">Requisitos Mínimos</h3>
+      <h3 class="text-xl font-semibold mt-6 text-purple-400">{% trans "Requisitos Mínimos" %}</h3>
 
       <div>
-        <label class="block text-sm font-medium mb-1">Procesador</label>
+        <label class="block text-sm font-medium mb-1">{% trans "Procesador" %}</label>
         {{ form.min_cpu|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
       </div>
       <div>
-        <label class="block text-sm font-medium mb-1">RAM (GB)</label>
+        <label class="block text-sm font-medium mb-1">{% trans "RAM (GB)" %}</label>
         {{ form.min_ram|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
       </div>
       <div>
-        <label class="block text-sm font-medium mb-1">Tarjeta Gráfica</label>
+        <label class="block text-sm font-medium mb-1">{% trans "Tarjeta Gráfica" %}</label>
         {{ form.min_gpu|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
       </div>
 
       <!-- Requisitos Recomendados -->
-      <h3 class="text-xl font-semibold mt-6 text-purple-400">Requisitos Recomendados</h3>
+      <h3 class="text-xl font-semibold mt-6 text-purple-400">{% trans "Requisitos Recomendados" %}</h3>
 
       <div>
-        <label class="block text-sm font-medium mb-1">Procesador</label>
+        <label class="block text-sm font-medium mb-1">{% trans "Procesador" %}</label>
         {{ form.rec_cpu|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
       </div>
       <div>
-        <label class="block text-sm font-medium mb-1">RAM (GB)</label>
+        <label class="block text-sm font-medium mb-1">{% trans "RAM (GB)" %}</label>
         {{ form.rec_ram|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
       </div>
       <div>
-        <label class="block text-sm font-medium mb-1">Tarjeta Gráfica</label>
+        <label class="block text-sm font-medium mb-1">{% trans "Tarjeta Gráfica" %}</label>
         {{ form.rec_gpu|add_class:"w-full px-4 py-2 text-gray-900 rounded-md bg-gray-100" }}
       </div>
 
       <!-- Imagen -->
       <div>
-        <label for="id_image" class="block text-sm font-medium mb-1">Imagen</label>
+        <label for="id_image" class="block text-sm font-medium mb-1">{% trans "Imagen" %}</label>
         {{ form.image|add_class:"w-full text-gray-900 bg-gray-100 rounded-md" }}
       </div>
 
       <!-- Categorías -->
       <div>
-        <label for="id_categories" class="block text-sm font-medium mb-1">Categorías</label>
+        <label for="id_categories" class="block text-sm font-medium mb-1">{% trans "Categorías" %}</label>
         <div class="mt-2 space-y-2">
           {% for checkbox in form.categories %}
             <div class="flex items-center space-x-2">
@@ -101,7 +101,7 @@
 
       <!-- Disponible -->
       <div>
-        <label for="id_available" class="block text-sm font-medium mb-1">Disponible</label>
+        <label for="id_available" class="block text-sm font-medium mb-1">{% trans "Disponible" %}</label>
         {{ form.available }}
       </div>
     </div>

@@ -24,8 +24,11 @@
         {% endfor %}
       </div>
     {% else %}
-      <p class="text-center text-gray-400 mt-12">{% trans "Aún no hay recomendaciones disponibles." %}</p>
+      <p class="text-center text-gray-400 mt-12">
+        {% trans "Aún no hay recomendaciones disponibles." %}
+      </p>
     {% endif %}
   </div>
 </div>
 {% endblock %}
+

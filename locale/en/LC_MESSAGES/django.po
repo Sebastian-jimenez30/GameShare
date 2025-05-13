@@ -358,18 +358,6 @@ msgstr "Name"
 msgid "Datos de Hardware"
 msgstr "Hardware Information"
 
-#: .\apps\users\templates\users\register_form.html:62
-msgid "Procesador"
-msgstr "Processor"
-
-#: .\apps\users\templates\users\register_form.html:68
-msgid "RAM (GB)"
-msgstr "RAM (GB)"
-
-#: .\apps\users\templates\users\register_form.html:74
-msgid "Tarjeta Gráfica"
-msgstr "Graphics Card"
-
 #: .\apps\users\templates\users\register_form.html:92
 msgid "Registrarse"
 msgstr "Sign Up"
@@ -431,3 +419,97 @@ msgstr "View details"
 
 #~ msgid "Comprar"
 #~ msgstr "Buy"
+
+msgid "Título"
+msgstr "Title"
+
+msgid "Desarrollador"
+msgstr "Developer"
+
+msgid "Año de Lanzamiento"
+msgstr "Release Year"
+
+msgid "Precio de Compra"
+msgstr "Purchase Price"
+
+msgid "Renta por Hora"
+msgstr "Rental Price per Hour"
+
+msgid "Renta por Día"
+msgstr "Rental Price per Day"
+
+msgid "Requisitos Mínimos"
+msgstr "Minimum Requirements"
+
+msgid "Procesador"
+msgstr "Processor"
+
+msgid "RAM (GB)"
+msgstr "RAM (GB)"
+
+msgid "Tarjeta Gráfica"
+msgstr "Graphics Card"
+
+msgid "Requisitos Recomendados"
+msgstr "Recommended Requirements"
+
+msgid "Imagen"
+msgstr "Image"
+
+msgid "Categorías"
+msgstr "Categories"
+
+msgid "Disponible"
+msgstr "Available"
+
+msgid "Top Rentados"
+msgstr "Top Rented"
+
+msgid "Top Comprados"
+msgstr "Top Purchased"
+
+msgid "Año de lanzamiento"
+msgstr "Release Year"
+
+msgid "Precio de compra"
+msgstr "Purchase Price"
+
+msgid "Renta por hora"
+msgstr "Rental Price per Hour"
+
+msgid "Renta por día"
+msgstr "Rental Price per Day"
+
+msgid "Sí"
+msgstr "Yes"
+
+msgid "No"
+msgstr "No"
+
+msgid "Este juego no tiene categorías asignadas."
+msgstr "This game has no assigned categories."
+
+msgid "RAM"
+msgstr "RAM"
+
+msgid "Gráfica"
+msgstr "Graphics Card"
+
+msgid "Reseñas"
+msgstr "Reviews"
+
+msgid "Publicado el"
+msgstr "Published on"
+
+msgid "Juegos Recomendados para Ti"
+msgstr "Recommended Games for You"
+
+msgid "Para ti"
+msgstr "For You"
+
+msgid "Aún no hay recomendaciones disponibles."
+msgstr "There are no recommendations available yet."
+
+msgid "Hola desde"
+msgstr "Hello from"
+
